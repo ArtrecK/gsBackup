@@ -1,0 +1,829 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpws:process exitOnStandardFault="no"
+    name="mx.com.elektra.portafoliomanagement.compensations.EncryptData"
+    suppressJoinFailure="yes"
+    targetNamespace="http://xmlns.example.com/20181205104544"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:info="http://www.tibco.com/bw/process/info"
+    xmlns:ns="http://www.tibco.com/pe/EngineTypes"
+    xmlns:ns0="http://xmlns.example.com/20181205104544PLT"
+    xmlns:ns1="http://tempuri.org/"
+    xmlns:ns2="http://xmlns.example.com/CompensationsResource/parameters"
+    xmlns:ns3="http://www.example.com/namespaces/marketing/TransactionLogDataAccess"
+    xmlns:ns4="http://www.example.com/namespaces/tns/1544028238092"
+    xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
+    xmlns:sca-bpel="http://docs.oasis-open.org/ns/opencsa/sca-bpel/200801"
+    xmlns:tibex="http://www.tibco.com/bpel/2007/extensions"
+    xmlns:tibprop="http://ns.tibco.com/bw/property" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <tibex:Types>
+        <xs:schema attributeFormDefault="unqualified"
+            elementFormDefault="qualified"
+            targetNamespace="http://www.tibco.com/pe/EngineTypes"
+            xmlns:tns="http://www.tibco.com/pe/EngineTypes" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+            <xs:complexType block="extension restriction"
+                final="extension restriction" name="ErrorReport">
+                <xs:sequence>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" name="StackTrace" type="xs:string"/>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" name="Msg" type="xs:string"/>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" name="FullClass" type="xs:string"/>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" name="Class" type="xs:string"/>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" name="ProcessStack" type="xs:string"/>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" minOccurs="0" name="MsgCode" type="xs:string"/>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" minOccurs="0" name="Data" type="tns:anydata"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType block="extension restriction"
+                final="extension restriction" name="OptionalErrorReport">
+                <xs:sequence>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" minOccurs="0"
+                        name="StackTrace" type="xs:string"/>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" minOccurs="0" name="Msg" type="xs:string"/>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" minOccurs="0"
+                        name="FullClass" type="xs:string"/>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" minOccurs="0" name="Class" type="xs:string"/>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" minOccurs="0"
+                        name="ProcessStack" type="xs:string"/>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" minOccurs="0" name="MsgCode" type="xs:string"/>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" minOccurs="0" name="Data" type="tns:anydata"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType block="extension restriction"
+                final="extension restriction" name="FaultDetail">
+                <xs:sequence>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" name="ActivityName" type="xs:string"/>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" minOccurs="0" name="Data" type="tns:anydata"/>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" name="Msg" type="xs:string"/>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" name="MsgCode" type="xs:string"/>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" name="ProcessStack" type="xs:string"/>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" name="StackTrace" type="xs:string"/>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" name="FullClass" type="xs:string"/>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" name="Class" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType block="extension restriction"
+                final="extension restriction" name="ProcessContext">
+                <xs:sequence>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" name="JobId" type="xs:string"/>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" name="ApplicationName" type="xs:string"/>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" name="EngineName" type="xs:string"/>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" name="ProcessInstanceId" type="xs:string"/>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" minOccurs="0"
+                        name="CustomJobId" type="xs:string"/>
+                    <!--xs:element name="RestartedFromCheckpoint" form="unqualified" block="extension restriction substitution" type="xs:boolean"/-->
+                    <!--xs:element minOccurs="0" maxOccurs="unbounded" name="TrackingInfo" form="unqualified" block="extension restriction substitution" type="xs:string"/-->
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType block="extension restriction"
+                final="extension restriction" name="anydata">
+                <xs:sequence>
+                    <xs:any namespace="##any" processContents="lax"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element block="extension restriction substitution"
+                final="extension restriction" name="OptionalErrorReport" type="tns:OptionalErrorReport"/>
+            <xs:element block="extension restriction substitution"
+                final="extension restriction" name="ErrorReport" type="tns:ErrorReport"/>
+            <xs:element block="extension restriction substitution"
+                final="extension restriction" name="FaultDetail" type="tns:FaultDetail"/>
+            <xs:element block="extension restriction substitution"
+                final="extension restriction" name="ProcessContext" type="tns:ProcessContext"/>
+            <xs:element block="extension restriction substitution"
+                final="extension restriction" name="CorrelationValue" type="xs:string"/>
+        </xs:schema>
+        <schema attributeFormDefault="unqualified"
+            elementFormDefault="unqualified"
+            targetNamespace="http://schemas.tibco.com/bw/pe/plugin/5.0/exceptions"
+            version="" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://schemas.tibco.com/bw/pe/plugin/5.0/exceptions">
+            <complexType name="ActivityExceptionType">
+                <sequence>
+                    <element name="msg" type="string"/>
+                    <element minOccurs="0" name="msgCode" type="string"/>
+                </sequence>
+            </complexType>
+            <element name="ActivityException" type="tns:ActivityExceptionType"/>
+            <complexType name="ActivityTimedOutExceptionType">
+                <complexContent>
+                    <extension base="tns:ActivityExceptionType"/>
+                </complexContent>
+            </complexType>
+            <element name="ActivityTimedOutException" type="tns:ActivityTimedOutExceptionType"/>
+            <complexType name="DuplicateKeyExceptionType">
+                <complexContent>
+                    <extension base="tns:ActivityExceptionType">
+                        <sequence>
+                            <element name="duplicateKey" type="string"/>
+                            <element minOccurs="0" name="previousJobID" type="string"/>
+                        </sequence>
+                    </extension>
+                </complexContent>
+            </complexType>
+            <element name="DuplicateKeyException" type="tns:DuplicateKeyExceptionType"/>
+        </schema>
+        <wsdl:definitions
+            targetNamespace="http://xmlns.example.com/20181205104544PLT"
+            xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
+            xmlns:ptyp="http://tempuri.org/"
+            xmlns:tns="http://xmlns.example.com/20181205104544PLT"
+            xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop"
+            xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <plnk:partnerLinkType name="partnerLinkType">
+                <plnk:role name="use" portType="ptyp:PortalRHSoap"/>
+            </plnk:partnerLinkType>
+            <wsdl:import namespace="http://tempuri.org/"/>
+        </wsdl:definitions>
+    </tibex:Types>
+    <tibex:ProcessInfo callable="true" createdBy="jcoriah"
+        createdOn="Wed Dec 05 10:45:44 CST 2018" description=""
+        extraErrorVars="false" modifiers="public"
+        productVersion="6.4.1 HF1 V36 2017-09-26" scalable="true"
+        singleton="true" stateless="false" type="IT"/>
+    <tibex:ProcessInterface context=""
+        input="{http://xmlns.example.com/CompensationsResource/parameters}compensations-encryptGetParameters" output="{http://www.example.com/namespaces/tns/1544028238092}CompensationsEncryptResponse"/>
+    <tibex:ProcessTemplateConfigurations/>
+    <notation:Diagram measurementUnit="Pixel" type="BWProcess"
+        xmlns:bwnotation="http://tns.tibco.com/bw/runtime/BWNotation"
+        xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.2/notation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <children type="2001">
+            <children type="5001"/>
+            <children type="3002">
+                <styles xsi:type="notation:SortingStyle"/>
+                <styles xsi:type="notation:FilteringStyle"/>
+            </children>
+            <children type="3003">
+                <styles xsi:type="notation:SortingStyle"/>
+                <styles xsi:type="notation:FilteringStyle"/>
+            </children>
+            <children type="3004">
+                <children type="4018">
+                    <children type="3018">
+                        <children type="4020">
+                            <children type="3020">
+                                <children type="4005">
+                                    <children type="3007">
+                                    <children type="4002">
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <styles fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <styles
+                                    backgroundColor="16777215"
+                                    gradientEndColor="50431"
+                                    gradientStartColor="16777215" xsi:type="bwnotation:BackgroundStyle"/>
+                                    <element href="//0/@process/@activity/@activity/@activities.0"/>
+                                    <layoutConstraint x="2"
+                                    xsi:type="notation:Bounds" y="2"/>
+                                    </children>
+                                    <children type="4002">
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <styles fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <styles
+                                    backgroundColor="16777215"
+                                    gradientEndColor="50431"
+                                    gradientStartColor="16777215" xsi:type="bwnotation:BackgroundStyle"/>
+                                    <element href="//0/@process/@activity/@activity/@activities.1"/>
+                                    <layoutConstraint x="135"
+                                    xsi:type="notation:Bounds" y="2"/>
+                                    </children>
+                                    <children type="4002">
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <styles fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <styles
+                                    backgroundColor="16777215"
+                                    gradientEndColor="50431"
+                                    gradientStartColor="16777215" xsi:type="bwnotation:BackgroundStyle"/>
+                                    <element href="//0/@process/@activity/@activity/@activities.2"/>
+                                    <layoutConstraint x="135"
+                                    xsi:type="notation:Bounds" y="182"/>
+                                    </children>
+                                    <children type="4002 bw.internal.getSharedVariable">
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <styles fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <styles
+                                    backgroundColor="16777215"
+                                    gradientEndColor="50431"
+                                    gradientStartColor="16777215" xsi:type="bwnotation:BackgroundStyle"/>
+                                    <element href="//0/@process/@activity/@activity/@activities.3"/>
+                                    <layoutConstraint
+                                    height="40" width="40"
+                                    x="2"
+                                    xsi:type="notation:Bounds" y="92"/>
+                                    </children>
+                                    <children type="4002 bw.generalactivities.callprocess">
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <styles fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <styles
+                                    backgroundColor="16777215"
+                                    gradientEndColor="50431"
+                                    gradientStartColor="16777215" xsi:type="bwnotation:BackgroundStyle"/>
+                                    <element href="//0/@process/@activity/@activity/@activities.4"/>
+                                    <layoutConstraint
+                                    height="40" width="40"
+                                    x="2"
+                                    xsi:type="notation:Bounds" y="182"/>
+                                    </children>
+                                    <children type="4002 bw.generalactivities.callprocess">
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <styles fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <styles
+                                    backgroundColor="16777215"
+                                    gradientEndColor="50431"
+                                    gradientStartColor="16777215" xsi:type="bwnotation:BackgroundStyle"/>
+                                    <element href="//0/@process/@activity/@activity/@activities.5"/>
+                                    <layoutConstraint
+                                    height="40" width="40"
+                                    x="135"
+                                    xsi:type="notation:Bounds" y="92"/>
+                                    </children>
+                                    <styles xsi:type="notation:DrawerStyle"/>
+                                    <styles xsi:type="notation:SortingStyle"/>
+                                    <styles xsi:type="notation:FilteringStyle"/>
+                                    <element href="//0/@process/@activity/@activity"/>
+                                    </children>
+                                    <styles fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <styles backgroundColor="16777215"
+                                    gradientEndColor="50431"
+                                    gradientStartColor="16777215" xsi:type="bwnotation:BackgroundStyle"/>
+                                    <styles xsi:type="bwnotation:ResizingStyle"/>
+                                    <element href="//0/@process/@activity/@activity"/>
+                                    <layoutConstraint height="384"
+                                    width="515" xsi:type="notation:Bounds"/>
+                                </children>
+                                <styles xsi:type="notation:SortingStyle"/>
+                                <styles xsi:type="notation:FilteringStyle"/>
+                            </children>
+                            <styles fontName="Noto Sans" lineColor="0" xsi:type="notation:ShapeStyle"/>
+                            <styles xsi:type="bwnotation:BackgroundStyle"/>
+                            <styles xsi:type="bwnotation:ResizingStyle"/>
+                            <element href="//0/@process/@activity"/>
+                            <layoutConstraint height="365" width="444"
+                                x="30" xsi:type="notation:Bounds" y="20"/>
+                        </children>
+                        <styles xsi:type="notation:SortingStyle"/>
+                        <styles xsi:type="notation:FilteringStyle"/>
+                        <element href="//0/@process/@activity"/>
+                    </children>
+                    <styles fontName="Noto Sans" lineColor="0" xsi:type="notation:ShapeStyle"/>
+                    <styles xsi:type="bwnotation:BackgroundStyle"/>
+                    <styles xsi:type="bwnotation:ResizingStyle"/>
+                    <element href="//0/@process/@activity"/>
+                    <layoutConstraint height="409" width="519" xsi:type="notation:Bounds"/>
+                </children>
+                <styles xsi:type="notation:SortingStyle"/>
+                <styles xsi:type="notation:FilteringStyle"/>
+                <element href="//0/@process"/>
+            </children>
+            <styles fontName="Noto Sans" lineColor="0" xsi:type="notation:ShapeStyle"/>
+            <element href="//0/@process"/>
+            <layoutConstraint height="460" width="860" xsi:type="notation:Bounds"/>
+        </children>
+        <styles xsi:type="notation:DiagramStyle"/>
+        <element href="//0"/>
+        <edges
+            source="//@children.0/@children.3/@children.0/@children.0/@children.0/@children.0/@children.0/@children.0/@children.0"
+            target="//@children.0/@children.3/@children.0/@children.0/@children.0/@children.0/@children.0/@children.0/@children.3" type="4006">
+            <children type="6002">
+                <layoutConstraint xsi:type="notation:Location" y="40"/>
+            </children>
+            <styles lineColor="0" xsi:type="notation:ConnectorStyle"/>
+            <styles fontName="Noto Sans" xsi:type="notation:FontStyle"/>
+            <element href="//0/@process/@activity/@activity/@links/@children.0"/>
+            <bendpoints points="[0, 0, 0, 0]$[0, 0, 0, 0]" xsi:type="notation:RelativeBendpoints"/>
+        </edges>
+        <edges
+            source="//@children.0/@children.3/@children.0/@children.0/@children.0/@children.0/@children.0/@children.0/@children.3"
+            target="//@children.0/@children.3/@children.0/@children.0/@children.0/@children.0/@children.0/@children.0/@children.4" type="4006">
+            <children type="6002">
+                <layoutConstraint xsi:type="notation:Location" y="40"/>
+            </children>
+            <styles lineColor="0" xsi:type="notation:ConnectorStyle"/>
+            <styles fontName="Noto Sans" xsi:type="notation:FontStyle"/>
+            <element href="//0/@process/@activity/@activity/@links/@children.1"/>
+            <bendpoints points="[0, 0, 0, 0]$[0, 0, 0, 0]" xsi:type="notation:RelativeBendpoints"/>
+        </edges>
+        <edges
+            source="//@children.0/@children.3/@children.0/@children.0/@children.0/@children.0/@children.0/@children.0/@children.4"
+            target="//@children.0/@children.3/@children.0/@children.0/@children.0/@children.0/@children.0/@children.0/@children.2" type="4006">
+            <children type="6002">
+                <layoutConstraint xsi:type="notation:Location" y="40"/>
+            </children>
+            <styles lineColor="0" xsi:type="notation:ConnectorStyle"/>
+            <styles fontName="Noto Sans" xsi:type="notation:FontStyle"/>
+            <element href="//0/@process/@activity/@activity/@links/@children.2"/>
+            <bendpoints points="[25, 0, -108, 0]$[109, 0, -24, 0]" xsi:type="notation:RelativeBendpoints"/>
+        </edges>
+        <edges
+            source="//@children.0/@children.3/@children.0/@children.0/@children.0/@children.0/@children.0/@children.0/@children.2"
+            target="//@children.0/@children.3/@children.0/@children.0/@children.0/@children.0/@children.0/@children.0/@children.5" type="4006">
+            <children type="6002">
+                <layoutConstraint xsi:type="notation:Location" y="40"/>
+            </children>
+            <styles lineColor="0" xsi:type="notation:ConnectorStyle"/>
+            <styles fontName="Noto Sans" xsi:type="notation:FontStyle"/>
+            <element href="//0/@process/@activity/@activity/@links/@children.3"/>
+            <bendpoints points="[0, 0, 0, 0]$[0, 0, 0, 0]" xsi:type="notation:RelativeBendpoints"/>
+        </edges>
+        <edges
+            source="//@children.0/@children.3/@children.0/@children.0/@children.0/@children.0/@children.0/@children.0/@children.5"
+            target="//@children.0/@children.3/@children.0/@children.0/@children.0/@children.0/@children.0/@children.0/@children.1" type="4006">
+            <children type="6002">
+                <layoutConstraint xsi:type="notation:Location" y="40"/>
+            </children>
+            <styles lineColor="0" xsi:type="notation:ConnectorStyle"/>
+            <styles fontName="Noto Sans" xsi:type="notation:FontStyle"/>
+            <element href="//0/@process/@activity/@activity/@links/@children.4"/>
+            <bendpoints points="[0, -24, 0, 66]$[0, -65, 0, 25]" xsi:type="notation:RelativeBendpoints"/>
+        </edges>
+    </notation:Diagram>
+    <bpws:import importType="http://schemas.xmlsoap.org/wsdl/"
+        location="../../../../../../Service%20Descriptors/external/compensations/PortalRH.wsdl" namespace="http://tempuri.org/"/>
+    <bpws:import importType="http://www.w3.org/2001/XMLSchema" namespace="http://xmlns.example.com/CompensationsResource/parameters"/>
+    <bpws:import importType="http://www.w3.org/2001/XMLSchema" namespace="http://www.example.com/namespaces/marketing/TransactionLogDataAccess"/>
+    <bpws:import importType="http://www.w3.org/2001/XMLSchema" namespace="http://www.example.com/namespaces/tns/1544028238092"/>
+    <bpws:partnerLinks>
+        <bpws:partnerLink name="PortalRHSoap"
+            partnerLinkType="ns0:partnerLinkType" partnerRole="use"
+            sca-bpel:ignore="true" sca-bpel:reference="PortalRHSoap" sca-bpel:wiredByImpl="false">
+            <tibex:ReferenceBinding>
+                <tibex:binding>
+                    <bwbinding:BWBaseBinding
+                        xmlns:axis2="http://xsd.tns.tibco.com/bw/models/binding/soap/axis2"
+                        xmlns:bwbinding="http://tns.tibco.com/bw/model/core/bwbinding"
+                        xmlns:pt="http://tempuri.org/"
+                        xmlns:sca="http://www.osoa.org/xmlns/sca/1.0"
+                        xmlns:scact="http://xsd.tns.tibco.com/amf/models/sca/componentType"
+                        xmlns:scaext="http://xsd.tns.tibco.com/amf/models/sca/extensions" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                        <referenceBinding name="PortalRHSoap" xsi:type="scact:Reference">
+                            <sca:interface.wsdl
+                                interface="http://tempuri.org/#wsdl.interface(PortalRHSoap)" scaext:wsdlLocation="../../../../../../Service%20Descriptors/external/compensations/PortalRH.wsdl"/>
+                            <scaext:binding
+                                locationURI="http://10.53.29.252/ws_InterfasesRH/Linea/PortalRH.asmx"
+                                modelVersion="1.2.0"
+                                name="SOAPReferenceBinding"
+                                portName="PortalRHSoap"
+                                portTypeQName="pt:PortalRHSoap"
+                                portTypeWSDLLocation="platform:/resource/PortfolioManagementApplicationModule.module/Service%20Descriptors/external/compensations/PortalRH.wsdl"
+                                serviceBindingQName="pt:PortalRHSoap"
+                                serviceQName="pt:PortalRH"
+                                transportBindingType="HTTP"
+                                wsdlLocation="platform:/resource/PortfolioManagementApplicationModule.module/Service%20Descriptors/external/compensations/PortalRH.wsdl" xsi:type="axis2:SOAPReferenceBinding">
+                                <bindingType style="DOCUMENT"/>
+                                <operationConfiguration
+                                    action="http://tempuri.org/encrypt" operationName="encrypt">
+                                    <bindingType style="DOCUMENT"/>
+                                    <messageConfiguration
+                                    messageQName="pt:encryptSoapIn" wsdlLocation="platform:/resource/PortfolioManagementApplicationModule.module/Service%20Descriptors/external/compensations/PortalRH.wsdl">
+                                    <messagePartConfigurations
+                                    encoding="literal"
+                                    partElementName="pt:encrypt"
+                                    partName="parameters" xsi:type="axis2:BodyPartConfiguration"/>
+                                    </messageConfiguration>
+                                    <messageConfiguration
+                                    messageDirection="OUTPUT"
+                                    messageQName="pt:encryptSoapOut" wsdlLocation="platform:/resource/PortfolioManagementApplicationModule.module/Service%20Descriptors/external/compensations/PortalRH.wsdl">
+                                    <messagePartConfigurations
+                                    encoding="literal"
+                                    partElementName="pt:encryptResponse"
+                                    partName="parameters" xsi:type="axis2:BodyPartConfiguration"/>
+                                    </messageConfiguration>
+                                    <context>
+                                    <inputMapping/>
+                                    <outputMapping direction="OUTPUT"/>
+                                    </context>
+                                </operationConfiguration>
+                                <operationConfiguration
+                                    action="http://tempuri.org/decrypt" operationName="decrypt">
+                                    <bindingType style="DOCUMENT"/>
+                                    <messageConfiguration
+                                    messageQName="pt:decryptSoapIn" wsdlLocation="platform:/resource/PortfolioManagementApplicationModule.module/Service%20Descriptors/external/compensations/PortalRH.wsdl">
+                                    <messagePartConfigurations
+                                    encoding="literal"
+                                    partElementName="pt:decrypt"
+                                    partName="parameters" xsi:type="axis2:BodyPartConfiguration"/>
+                                    </messageConfiguration>
+                                    <messageConfiguration
+                                    messageDirection="OUTPUT"
+                                    messageQName="pt:decryptSoapOut" wsdlLocation="platform:/resource/PortfolioManagementApplicationModule.module/Service%20Descriptors/external/compensations/PortalRH.wsdl">
+                                    <messagePartConfigurations
+                                    encoding="literal"
+                                    partElementName="pt:decryptResponse"
+                                    partName="parameters" xsi:type="axis2:BodyPartConfiguration"/>
+                                    </messageConfiguration>
+                                    <context>
+                                    <inputMapping/>
+                                    <outputMapping direction="OUTPUT"/>
+                                    </context>
+                                </operationConfiguration>
+                                <operationConfiguration
+                                    action="http://tempuri.org/expires_encrypt" operationName="expires_encrypt">
+                                    <bindingType style="DOCUMENT"/>
+                                    <messageConfiguration
+                                    messageQName="pt:expires_encryptSoapIn" wsdlLocation="platform:/resource/PortfolioManagementApplicationModule.module/Service%20Descriptors/external/compensations/PortalRH.wsdl">
+                                    <messagePartConfigurations
+                                    encoding="literal"
+                                    partElementName="pt:expires_encrypt"
+                                    partName="parameters" xsi:type="axis2:BodyPartConfiguration"/>
+                                    </messageConfiguration>
+                                    <messageConfiguration
+                                    messageDirection="OUTPUT"
+                                    messageQName="pt:expires_encryptSoapOut" wsdlLocation="platform:/resource/PortfolioManagementApplicationModule.module/Service%20Descriptors/external/compensations/PortalRH.wsdl">
+                                    <messagePartConfigurations
+                                    encoding="literal"
+                                    partElementName="pt:expires_encryptResponse"
+                                    partName="parameters" xsi:type="axis2:BodyPartConfiguration"/>
+                                    </messageConfiguration>
+                                    <context>
+                                    <inputMapping/>
+                                    <outputMapping direction="OUTPUT"/>
+                                    </context>
+                                </operationConfiguration>
+                                <operationConfiguration
+                                    action="http://tempuri.org/expires_decrypt" operationName="expires_decrypt">
+                                    <bindingType style="DOCUMENT"/>
+                                    <messageConfiguration
+                                    messageQName="pt:expires_decryptSoapIn" wsdlLocation="platform:/resource/PortfolioManagementApplicationModule.module/Service%20Descriptors/external/compensations/PortalRH.wsdl">
+                                    <messagePartConfigurations
+                                    encoding="literal"
+                                    partElementName="pt:expires_decrypt"
+                                    partName="parameters" xsi:type="axis2:BodyPartConfiguration"/>
+                                    </messageConfiguration>
+                                    <messageConfiguration
+                                    messageDirection="OUTPUT"
+                                    messageQName="pt:expires_decryptSoapOut" wsdlLocation="platform:/resource/PortfolioManagementApplicationModule.module/Service%20Descriptors/external/compensations/PortalRH.wsdl">
+                                    <messagePartConfigurations
+                                    encoding="literal"
+                                    partElementName="pt:expires_decryptResponse"
+                                    partName="parameters" xsi:type="axis2:BodyPartConfiguration"/>
+                                    </messageConfiguration>
+                                    <context>
+                                    <inputMapping/>
+                                    <outputMapping direction="OUTPUT"/>
+                                    </context>
+                                </operationConfiguration>
+                                <outboundConfiguration
+                                    httpClient="portfoliomanagementapplicationmodule.http.compensations.HttpClientCompensations" xsi:type="axis2:HttpTransportConfiguration"/>
+                            </scaext:binding>
+                            <scact:bindingAdjunct bindingName="SOAPReferenceBinding">
+                                <sca:property name="endpointURI" scaext:simpleValue="/mx.com.portfolio/connection/soapCompensations/endPoint"/>
+                            </scact:bindingAdjunct>
+                        </referenceBinding>
+                    </bwbinding:BWBaseBinding>
+                </tibex:binding>
+            </tibex:ReferenceBinding>
+        </bpws:partnerLink>
+    </bpws:partnerLinks>
+    <bpws:variables>
+        <bpws:variable element="ns:ProcessContext"
+            name="_processContext" sca-bpel:internal="true"/>
+        <bpws:variable messageType="ns1:encryptSoapIn"
+            name="encrypt-input" sca-bpel:internal="true"/>
+        <bpws:variable messageType="ns1:encryptSoapOut" name="encrypt" sca-bpel:internal="true"/>
+        <bpws:variable name="transactionId" sca-bpel:internal="true" type="xsd:string"/>
+        <bpws:variable element="ns3:Logger" name="logFrontRequest-input" sca-bpel:internal="true"/>
+        <bpws:variable name="username" sca-bpel:hotUpdate="false"
+            sca-bpel:privateProperty="true" sca-bpel:property="yes"
+            tibex:propertySource="/mx.com.portfolio/connection/soapCompensations/username" type="xsd:string"/>
+        <bpws:variable name="password" sca-bpel:hotUpdate="false"
+            sca-bpel:privateProperty="true" sca-bpel:property="yes"
+            tibex:propertySource="/mx.com.portfolio/connection/soapCompensations/password" type="xsd:string"/>
+        <bpws:variable name="param" sca-bpel:hotUpdate="false"
+            sca-bpel:privateProperty="true" sca-bpel:property="yes"
+            tibex:propertySource="/mx.com.portfolio/connection/soapCompensations/param" type="xsd:string"/>
+        <bpws:variable element="ns2:compensations-encryptGetParameters"
+            name="Start" sca-bpel:internal="true" tibex:parameter="in"/>
+        <bpws:variable element="ns3:Logger" name="logBackResponse-input" sca-bpel:internal="true"/>
+        <bpws:variable element="ns4:CompensationsEncryptResponse"
+            name="End-input" sca-bpel:internal="true" tibex:parameter="out"/>
+    </bpws:variables>
+    <bpws:extensions>
+        <bpws:extension mustUnderstand="no" namespace="http://www.eclipse.org/gmf/runtime/1.0.2/notation"/>
+        <bpws:extension mustUnderstand="no" namespace="http://www.tibco.com/bw/process/info"/>
+        <bpws:extension mustUnderstand="no" namespace="http://docs.oasis-open.org/ns/opencsa/sca-bpel/200801"/>
+        <bpws:extension mustUnderstand="no" namespace="http://docs.oasis-open.org/ns/opencsa/sca/200912"/>
+        <bpws:extension mustUnderstand="no" namespace="http://ns.tibco.com/bw/property"/>
+        <bpws:extension mustUnderstand="no" namespace="http://www.tibco.com/bpel/2007/extensions"/>
+    </bpws:extensions>
+    <bpws:scope name="scope">
+        <bpws:flow name="flow">
+            <bpws:links>
+                <bpws:link name="StartToGetSharedVariable" tibex:linkType="SUCCESS"/>
+                <bpws:link name="GetSharedVariableToCallProcess" tibex:linkType="SUCCESS"/>
+                <bpws:link name="logFrontRequestToencrypt" tibex:linkType="SUCCESS"/>
+                <bpws:link name="encryptToCallProcess" tibex:linkType="SUCCESS"/>
+                <bpws:link name="logBackResponseToEnd" tibex:linkType="SUCCESS"/>
+            </bpws:links>
+            <bpws:extensionActivity>
+                <tibex:receiveEvent createInstance="yes"
+                    eventTimeout="0" name="Start"
+                    tibex:xpdlId="61e8a897-458f-425f-aecc-0a4b2c4882fd"
+                    variable="Start" xmlns:tibex="http://www.tibco.com/bpel/2007/extensions">
+                    <bpws:sources>
+                        <bpws:source linkName="StartToGetSharedVariable"/>
+                    </bpws:sources>
+                    <tibex:eventSource>
+                        <tibex:StartEvent xmlns:tibex="http://www.tibco.com/bpel/2007/extensions"/>
+                    </tibex:eventSource>
+                </tibex:receiveEvent>
+            </bpws:extensionActivity>
+            <bpws:extensionActivity>
+                <tibex:activityExtension
+                    expression="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xa;&lt;xsl:stylesheet xmlns:xsl=&quot;http://www.w3.org/1999/XSL/Transform&quot; xmlns:tns=&quot;http://www.example.com/namespaces/tns/1544028238092&quot; xmlns:tns1=&quot;http://tempuri.org/&quot; version=&quot;2.0&quot;>&lt;xsl:param name=&quot;encrypt&quot;/>&lt;xsl:template name=&quot;End-input&quot; match=&quot;/&quot;>&lt;tns:CompensationsEncryptResponse>&lt;xsl:choose>&lt;xsl:when test=&quot;exists($encrypt/parameters/tns1:encryptResponse/tns1:CadenaCifrada)&quot;>&lt;xsl:if test=&quot;$encrypt/parameters/tns1:encryptResponse/tns1:CadenaCifrada&quot;>&lt;tns:string>&lt;xsl:value-of select=&quot;$encrypt/parameters/tns1:encryptResponse/tns1:CadenaCifrada&quot;/>&lt;/tns:string>&lt;/xsl:if>&lt;/xsl:when>&lt;xsl:otherwise/>&lt;/xsl:choose>&lt;tns:error>&lt;xsl:value-of select=&quot;$encrypt/parameters/tns1:encryptResponse/tns1:ExisteError&quot;/>&lt;/tns:error>&lt;xsl:choose>&lt;xsl:when test=&quot;exists($encrypt/parameters/tns1:encryptResponse/tns1:Mensaje)&quot;>&lt;xsl:if test=&quot;$encrypt/parameters/tns1:encryptResponse/tns1:Mensaje&quot;>&lt;tns:message>&lt;xsl:value-of select=&quot;$encrypt/parameters/tns1:encryptResponse/tns1:Mensaje&quot;/>&lt;/tns:message>&lt;/xsl:if>&lt;/xsl:when>&lt;xsl:otherwise/>&lt;/xsl:choose>&lt;/tns:CompensationsEncryptResponse>&lt;/xsl:template>&lt;/xsl:stylesheet>"
+                    expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xslt1.0"
+                    inputVariable="End-input" name="End"
+                    tibex:xpdlId="24925839-f241-420d-a105-e7eabfd083a2" xmlns:tibex="http://www.tibco.com/bpel/2007/extensions">
+                    <bpws:targets>
+                        <bpws:target linkName="logBackResponseToEnd"/>
+                    </bpws:targets>
+                    <tibex:inputBindings>
+                        <tibex:inputBinding
+                            expression="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xa;&lt;xsl:stylesheet xmlns:xsl=&quot;http://www.w3.org/1999/XSL/Transform&quot; xmlns:tns=&quot;http://www.example.com/namespaces/tns/1544028238092&quot; xmlns:tns1=&quot;http://tempuri.org/&quot; version=&quot;2.0&quot;>&#xa;    &lt;xsl:param name=&quot;encrypt.parameters&quot;/>&#xa;    &lt;xsl:template name=&quot;End-input&quot; match=&quot;/&quot;>&#xa;        &lt;tns:CompensationsEncryptResponse>&#xa;            &lt;xsl:choose>&#xa;                &lt;xsl:when test=&quot;exists($encrypt.parameters/tns1:CadenaCifrada)&quot;>&#xa;                    &lt;xsl:if test=&quot;$encrypt.parameters/tns1:CadenaCifrada&quot;>&#xa;                        &lt;tns:string>&#xa;                            &lt;xsl:value-of select=&quot;$encrypt.parameters/tns1:CadenaCifrada&quot;/>&#xa;                        &lt;/tns:string>&#xa;                    &lt;/xsl:if>&#xa;                &lt;/xsl:when>&#xa;                &lt;xsl:otherwise/>&#xa;            &lt;/xsl:choose>&#xa;            &lt;tns:error>&#xa;                &lt;xsl:value-of select=&quot;$encrypt.parameters/tns1:ExisteError&quot;/>&#xa;            &lt;/tns:error>&#xa;            &lt;xsl:choose>&#xa;                &lt;xsl:when test=&quot;exists($encrypt.parameters/tns1:Mensaje)&quot;>&#xa;                    &lt;xsl:if test=&quot;$encrypt.parameters/tns1:Mensaje&quot;>&#xa;                        &lt;tns:message>&#xa;                            &lt;xsl:value-of select=&quot;$encrypt.parameters/tns1:Mensaje&quot;/>&#xa;                        &lt;/tns:message>&#xa;                    &lt;/xsl:if>&#xa;                &lt;/xsl:when>&#xa;                &lt;xsl:otherwise/>&#xa;            &lt;/xsl:choose>&#xa;        &lt;/tns:CompensationsEncryptResponse>&#xa;    &lt;/xsl:template>&#xa;&lt;/xsl:stylesheet>" expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xslt1.0"/>
+                    </tibex:inputBindings>
+                    <tibex:config>
+                        <bwext:BWActivity
+                            activityTypeID="bw.internal.end"
+                            xmlns:activityconfig="http://tns.tibco.com/bw/model/activityconfig"
+                            xmlns:bwext="http://tns.tibco.com/bw/model/core/bwext"
+                            xmlns:internalactivities="http://ns.tibco.com/bw/core/internalactivity" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                            <activityConfig>
+                                <properties name="config" xsi:type="activityconfig:EMFProperty">
+                                    <type href="http://ns.tibco.com/bw/core/internalactivity#//End"/>
+                                    <value xsi:type="internalactivities:End"/>
+                                </properties>
+                            </activityConfig>
+                        </bwext:BWActivity>
+                    </tibex:config>
+                </tibex:activityExtension>
+            </bpws:extensionActivity>
+            <bpws:invoke inputVariable="encrypt-input" name="encrypt"
+                operation="encrypt" outputVariable="encrypt"
+                partnerLink="PortalRHSoap" portType="ns1:PortalRHSoap" tibex:xpdlId="5c1def12-053b-4380-8f10-2a41a7b146ed">
+                <tibex:inputBinding expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xslt1.0">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:tns="http://tempuri.org/" xmlns:tns1="http://xmlns.example.com/CompensationsResource/parameters" xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="2.0"&gt;&lt;xsl:param name="username"/&gt;&lt;xsl:param name="password"/&gt;&lt;xsl:param name="param"/&gt;&lt;xsl:param name="Start"/&gt;&lt;xsl:template name="encrypt-input" match="/"&gt;&lt;tns:encryptSoapIn&gt;&lt;parameters&gt;&lt;tns:encrypt&gt;&lt;tns:Usuario&gt;&lt;xsl:value-of select="$username"/&gt;&lt;/tns:Usuario&gt;&lt;tns:Contraseña&gt;&lt;xsl:value-of select="$password"/&gt;&lt;/tns:Contraseña&gt;&lt;tns:Cadena&gt;&lt;xsl:value-of select="concat($param,xsd:string($Start/tns1:employee))"/&gt;&lt;/tns:Cadena&gt;&lt;tns:ExisteError&gt;&lt;xsl:value-of select="false()"/&gt;&lt;/tns:ExisteError&gt;&lt;/tns:encrypt&gt;&lt;/parameters&gt;&lt;/tns:encryptSoapIn&gt;&lt;/xsl:template&gt;&lt;/xsl:stylesheet&gt;</tibex:inputBinding>
+                <tibex:inputBindings>
+                    <tibex:partBinding
+                        expression="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xa;&lt;xsl:stylesheet xmlns:xsl=&quot;http://www.w3.org/1999/XSL/Transform&quot; xmlns:tns=&quot;http://tempuri.org/&quot; xmlns:tns1=&quot;http://xmlns.example.com/CompensationsResource/parameters&quot; xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot; version=&quot;2.0&quot;>&#xa;    &lt;xsl:param name=&quot;username&quot;/>&#xa;    &lt;xsl:param name=&quot;password&quot;/>&#xa;    &lt;xsl:param name=&quot;param&quot;/>&#xa;    &lt;xsl:param name=&quot;Start&quot;/>&#xa;    &lt;xsl:template name=&quot;encrypt-input&quot; match=&quot;/&quot;>&#xa;        &lt;tns:encrypt>&#xa;            &lt;tns:Usuario>&#xa;                &lt;xsl:value-of select=&quot;$username&quot;/>&#xa;            &lt;/tns:Usuario>&#xa;            &lt;tns:Contraseña>&#xa;                &lt;xsl:value-of select=&quot;$password&quot;/>&#xa;            &lt;/tns:Contraseña>&#xa;            &lt;tns:Cadena>&#xa;                &lt;xsl:value-of select=&quot;concat($param,xsd:string($Start/tns1:employee))&quot;/>&#xa;            &lt;/tns:Cadena>&#xa;            &lt;tns:ExisteError>&#xa;                &lt;xsl:value-of select=&quot;false()&quot;/>&#xa;            &lt;/tns:ExisteError>&#xa;        &lt;/tns:encrypt>&#xa;    &lt;/xsl:template>&#xa;&lt;/xsl:stylesheet>" expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xslt1.0"/>
+                </tibex:inputBindings>
+                <bpws:targets>
+                    <bpws:target linkName="logFrontRequestToencrypt"/>
+                </bpws:targets>
+                <bpws:sources>
+                    <bpws:source linkName="encryptToCallProcess"/>
+                </bpws:sources>
+            </bpws:invoke>
+            <bpws:extensionActivity>
+                <tibex:extActivity name="transactionId"
+                    outputVariable="transactionId"
+                    tibex:xpdlId="f294a293-05fb-48de-8f42-15602afa92d7"
+                    type="bw.internal.getSharedVariable" xmlns:tibex="http://www.tibco.com/bpel/2007/extensions">
+                    <bpws:targets>
+                        <bpws:target linkName="StartToGetSharedVariable"/>
+                    </bpws:targets>
+                    <bpws:sources>
+                        <bpws:source linkName="GetSharedVariableToCallProcess"/>
+                    </bpws:sources>
+                    <tibex:GetSharedVariable inline="true"
+                        variableName="transactionId" xmlns:tibex="http://www.tibco.com/bpel/2007/extensions"/>
+                </tibex:extActivity>
+            </bpws:extensionActivity>
+            <bpws:extensionActivity>
+                <tibex:extActivity inputVariable="logFrontRequest-input"
+                    name="logFrontRequest"
+                    tibex:xpdlId="f72bbb0e-f6e3-4d7b-86f4-4f6e65e5dfd7"
+                    type="bw.generalactivities.callprocess" xmlns:tibex="http://www.tibco.com/bpel/2007/extensions">
+                    <bpws:targets>
+                        <bpws:target linkName="GetSharedVariableToCallProcess"/>
+                    </bpws:targets>
+                    <bpws:sources>
+                        <bpws:source linkName="logFrontRequestToencrypt"/>
+                    </bpws:sources>
+                    <tibex:inputBindings>
+                        <tibex:inputBinding
+                            expression="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xa;&lt;xsl:stylesheet xmlns:xsl=&quot;http://www.w3.org/1999/XSL/Transform&quot; xmlns:tns=&quot;http://www.example.com/namespaces/marketing/TransactionLogDataAccess&quot; xmlns:bw=&quot;http://www.tibco.com/bw/xpath/bw-custom-functions&quot; xmlns:tib=&quot;http://www.tibco.com/bw/xslt/custom-functions&quot; version=&quot;2.0&quot;>&lt;xsl:param name=&quot;transactionId&quot;/>&lt;xsl:param name=&quot;Start&quot;/>&lt;xsl:template name=&quot;logFrontRequest-input&quot; match=&quot;/&quot;>&lt;tns:Logger>&lt;tns:transactionId>&lt;xsl:value-of select=&quot;$transactionId&quot;/>&lt;/tns:transactionId>&lt;tns:startDateTime>&lt;xsl:value-of select=&quot;current-dateTime()&quot;/>&lt;/tns:startDateTime>&lt;tns:instance>&lt;xsl:value-of select=&quot;bw:getModuleProperty(&amp;quot;BW.APPNODE.NAME&amp;quot;)&quot;/>&lt;/tns:instance>&lt;tns:businessReference>&lt;xsl:value-of select=&quot;'Parametros de entrada'&quot;/>&lt;/tns:businessReference>&lt;tns:serviceName>&lt;xsl:value-of select=&quot;bw:getModuleProperty(&amp;quot;BW.APPLICATION.NAME&amp;quot;)&quot;/>&lt;/tns:serviceName>&lt;tns:operationName>&lt;xsl:value-of select=&quot;'EncryptData'&quot;/>&lt;/tns:operationName>&lt;tns:detailTransaction>&lt;tns:transactionDateTime>&lt;xsl:value-of select=&quot;current-dateTime()&quot;/>&lt;/tns:transactionDateTime>&lt;tns:transactionMsg>&lt;xsl:value-of select=&quot;tib:render-xml($Start, false(),true())&quot;/>&lt;/tns:transactionMsg>&lt;tns:transactionType>&lt;xsl:value-of select=&quot;'frontRequest'&quot;/>&lt;/tns:transactionType>&lt;/tns:detailTransaction>&lt;/tns:Logger>&lt;/xsl:template>&lt;/xsl:stylesheet>" expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xslt1.0"/>
+                    </tibex:inputBindings>
+                    <tibex:CallProcess
+                        moduleRef="TransactionLogSharedModule"
+                        subProcessName="com.elektra.transactionlog.shared.logger.v1.LoggerInvoker" xmlns:tibex="http://www.tibco.com/bpel/2007/extensions"/>
+                </tibex:extActivity>
+            </bpws:extensionActivity>
+            <bpws:extensionActivity>
+                <tibex:extActivity
+                    expression="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xa;&lt;xsl:stylesheet xmlns:xsl=&quot;http://www.w3.org/1999/XSL/Transform&quot; xmlns:tns=&quot;http://www.example.com/namespaces/marketing/TransactionLogDataAccess&quot; xmlns:bw=&quot;http://www.tibco.com/bw/xpath/bw-custom-functions&quot; xmlns:tib=&quot;http://www.tibco.com/bw/xslt/custom-functions&quot; xmlns:tns1=&quot;http://tempuri.org/&quot; version=&quot;2.0&quot;>&lt;xsl:param name=&quot;transactionId&quot;/>&lt;xsl:param name=&quot;encrypt&quot;/>&lt;xsl:template name=&quot;logBackResponse-input&quot; match=&quot;/&quot;>&lt;tns:Logger>&lt;tns:transactionId>&lt;xsl:value-of select=&quot;$transactionId&quot;/>&lt;/tns:transactionId>&lt;tns:endDateTime>&lt;xsl:value-of select=&quot;current-dateTime()&quot;/>&lt;/tns:endDateTime>&lt;tns:instance>&lt;xsl:value-of select=&quot;bw:getModuleProperty(&amp;quot;BW.APPNODE.NAME&amp;quot;)&quot;/>&lt;/tns:instance>&lt;tns:businessReference>&lt;xsl:value-of select=&quot;'Respuesta de servicio'&quot;/>&lt;/tns:businessReference>&lt;tns:serviceName>&lt;xsl:value-of select=&quot;bw:getModuleProperty(&amp;quot;BW.APPLICATION.NAME&amp;quot;)&quot;/>&lt;/tns:serviceName>&lt;tns:operationName>&lt;xsl:value-of select=&quot;'EncryptData'&quot;/>&lt;/tns:operationName>&lt;tns:detailTransaction>&lt;tns:transactionDateTime>&lt;xsl:value-of select=&quot;current-dateTime()&quot;/>&lt;/tns:transactionDateTime>&lt;tns:transactionMsg>&lt;xsl:value-of select=&quot;tib:render-xml($encrypt/parameters/tns1:encryptResponse, false(), true())&quot;/>&lt;/tns:transactionMsg>&lt;tns:transactionType>&lt;xsl:value-of select=&quot;'backResponse'&quot;/>&lt;/tns:transactionType>&lt;/tns:detailTransaction>&lt;/tns:Logger>&lt;/xsl:template>&lt;/xsl:stylesheet>"
+                    expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xslt1.0"
+                    inputVariable="logBackResponse-input"
+                    name="logBackResponse"
+                    tibex:xpdlId="60749f99-fb78-4f0a-989d-e852b17c57cc"
+                    type="bw.generalactivities.callprocess" xmlns:tibex="http://www.tibco.com/bpel/2007/extensions">
+                    <bpws:targets>
+                        <bpws:target linkName="encryptToCallProcess"/>
+                    </bpws:targets>
+                    <bpws:sources>
+                        <bpws:source linkName="logBackResponseToEnd"/>
+                    </bpws:sources>
+                    <tibex:inputBindings>
+                        <tibex:inputBinding
+                            expression="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xa;&lt;xsl:stylesheet xmlns:xsl=&quot;http://www.w3.org/1999/XSL/Transform&quot; xmlns:tns=&quot;http://www.example.com/namespaces/marketing/TransactionLogDataAccess&quot; xmlns:bw=&quot;http://www.tibco.com/bw/xpath/bw-custom-functions&quot; xmlns:tib=&quot;http://www.tibco.com/bw/xslt/custom-functions&quot; xmlns:tns1=&quot;http://tempuri.org/&quot; version=&quot;2.0&quot;>&#xa;    &lt;xsl:param name=&quot;encrypt.parameters&quot;/>&#xa;    &lt;xsl:param name=&quot;transactionId&quot;/>&#xa;    &#xa;    &lt;xsl:template name=&quot;logBackResponse-input&quot; match=&quot;/&quot;>&#xa;        &lt;tns:Logger>&#xa;            &lt;tns:transactionId>&#xa;                &lt;xsl:value-of select=&quot;$transactionId&quot;/>&#xa;            &lt;/tns:transactionId>&#xa;            &lt;tns:endDateTime>&#xa;                &lt;xsl:value-of select=&quot;current-dateTime()&quot;/>&#xa;            &lt;/tns:endDateTime>&#xa;            &lt;tns:instance>&#xa;                &lt;xsl:value-of select=&quot;bw:getModuleProperty(&amp;quot;BW.APPNODE.NAME&amp;quot;)&quot;/>&#xa;            &lt;/tns:instance>&#xa;            &lt;tns:businessReference>&#xa;                &lt;xsl:value-of select=&quot;'Respuesta de servicio'&quot;/>&#xa;            &lt;/tns:businessReference>&#xa;            &lt;tns:serviceName>&#xa;                &lt;xsl:value-of select=&quot;bw:getModuleProperty(&amp;quot;BW.APPLICATION.NAME&amp;quot;)&quot;/>&#xa;            &lt;/tns:serviceName>&#xa;            &lt;tns:operationName>&#xa;                &lt;xsl:value-of select=&quot;'EncryptData'&quot;/>&#xa;            &lt;/tns:operationName>&#xa;            &lt;tns:detailTransaction>&#xa;                &lt;tns:transactionDateTime>&#xa;                    &lt;xsl:value-of select=&quot;current-dateTime()&quot;/>&#xa;                &lt;/tns:transactionDateTime>&#xa;                &lt;tns:transactionMsg>&#xa;                    &lt;xsl:value-of select=&quot;tib:render-xml($encrypt.parameters, false(), true())&quot;/>&#xa;                &lt;/tns:transactionMsg>&#xa;                &lt;tns:transactionType>&#xa;                    &lt;xsl:value-of select=&quot;'backResponse'&quot;/>&#xa;                &lt;/tns:transactionType>&#xa;            &lt;/tns:detailTransaction>&#xa;        &lt;/tns:Logger>&#xa;    &lt;/xsl:template>&#xa;&lt;/xsl:stylesheet>" expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xslt1.0"/>
+                    </tibex:inputBindings>
+                    <tibex:CallProcess
+                        moduleRef="TransactionLogSharedModule"
+                        subProcessName="com.elektra.transactionlog.shared.logger.v1.LoggerInvoker" xmlns:tibex="http://www.tibco.com/bpel/2007/extensions"/>
+                </tibex:extActivity>
+            </bpws:extensionActivity>
+        </bpws:flow>
+    </bpws:scope>
+</bpws:process>

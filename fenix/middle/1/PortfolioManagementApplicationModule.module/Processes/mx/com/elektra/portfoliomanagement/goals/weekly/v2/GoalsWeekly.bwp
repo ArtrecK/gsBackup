@@ -1,0 +1,986 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpws:process exitOnStandardFault="no"
+    name="mx.com.elektra.portfoliomanagement.goals.weekly.v2.GoalsWeekly"
+    suppressJoinFailure="yes"
+    targetNamespace="http://xmlns.example.com/20190509171519"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:info="http://www.tibco.com/bw/process/info"
+    xmlns:ns="http://www.tibco.com/pe/EngineTypes"
+    xmlns:ns0="http://www.example.org/GoalsWeeklyParameterSchema"
+    xmlns:ns1="http://www.example.org/GoalsWeeklyResponseSchema"
+    xmlns:ns2="http://www.example.org/GoalsWeeklyRequestInterfaceSchema"
+    xmlns:ns3="http://www.example.org/GoalsWeeklyResponseInterfaceSchema"
+    xmlns:ns4="http://www.example.com/namespaces/marketing/TransactionLogDataAccess"
+    xmlns:ns5="http://www.example.org/GoalsWeeklyRequestParseXMLSchema"
+    xmlns:ns6="http://www.example.org/GoalsWeeklyResponseParseXMLSchema"
+    xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
+    xmlns:sca-bpel="http://docs.oasis-open.org/ns/opencsa/sca-bpel/200801"
+    xmlns:tibex="http://www.tibco.com/bpel/2007/extensions"
+    xmlns:tibprop="http://ns.tibco.com/bw/property" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <tibex:Types>
+        <xs:schema attributeFormDefault="unqualified"
+            elementFormDefault="qualified"
+            targetNamespace="http://www.tibco.com/pe/EngineTypes"
+            xmlns:tns="http://www.tibco.com/pe/EngineTypes" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+            <xs:complexType block="extension restriction"
+                final="extension restriction" name="ErrorReport">
+                <xs:sequence>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" name="StackTrace" type="xs:string"/>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" name="Msg" type="xs:string"/>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" name="FullClass" type="xs:string"/>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" name="Class" type="xs:string"/>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" name="ProcessStack" type="xs:string"/>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" minOccurs="0" name="MsgCode" type="xs:string"/>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" minOccurs="0" name="Data" type="tns:anydata"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType block="extension restriction"
+                final="extension restriction" name="OptionalErrorReport">
+                <xs:sequence>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" minOccurs="0"
+                        name="StackTrace" type="xs:string"/>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" minOccurs="0" name="Msg" type="xs:string"/>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" minOccurs="0"
+                        name="FullClass" type="xs:string"/>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" minOccurs="0" name="Class" type="xs:string"/>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" minOccurs="0"
+                        name="ProcessStack" type="xs:string"/>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" minOccurs="0" name="MsgCode" type="xs:string"/>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" minOccurs="0" name="Data" type="tns:anydata"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType block="extension restriction"
+                final="extension restriction" name="FaultDetail">
+                <xs:sequence>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" name="ActivityName" type="xs:string"/>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" minOccurs="0" name="Data" type="tns:anydata"/>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" name="Msg" type="xs:string"/>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" name="MsgCode" type="xs:string"/>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" name="ProcessStack" type="xs:string"/>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" name="StackTrace" type="xs:string"/>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" name="FullClass" type="xs:string"/>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" name="Class" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType block="extension restriction"
+                final="extension restriction" name="ProcessContext">
+                <xs:sequence>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" name="JobId" type="xs:string"/>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" name="ApplicationName" type="xs:string"/>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" name="EngineName" type="xs:string"/>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" name="ProcessInstanceId" type="xs:string"/>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" minOccurs="0"
+                        name="CustomJobId" type="xs:string"/>
+                    <!--xs:element name="RestartedFromCheckpoint" form="unqualified" block="extension restriction substitution" type="xs:boolean"/-->
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" maxOccurs="unbounded"
+                        minOccurs="0" name="TrackingInfo" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType block="extension restriction"
+                final="extension restriction" name="anydata">
+                <xs:sequence>
+                    <xs:any namespace="##any" processContents="lax"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element block="extension restriction substitution"
+                final="extension restriction" name="OptionalErrorReport" type="tns:OptionalErrorReport"/>
+            <xs:element block="extension restriction substitution"
+                final="extension restriction" name="ErrorReport" type="tns:ErrorReport"/>
+            <xs:element block="extension restriction substitution"
+                final="extension restriction" name="FaultDetail" type="tns:FaultDetail"/>
+            <xs:element block="extension restriction substitution"
+                final="extension restriction" name="ProcessContext" type="tns:ProcessContext"/>
+            <xs:element block="extension restriction substitution"
+                final="extension restriction" name="CorrelationValue" type="xs:string"/>
+        </xs:schema>
+        <schema attributeFormDefault="unqualified"
+            elementFormDefault="unqualified"
+            targetNamespace="http://schemas.tibco.com/bw/pe/plugin/5.0/exceptions"
+            version="" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://schemas.tibco.com/bw/pe/plugin/5.0/exceptions">
+            <complexType name="ActivityExceptionType">
+                <sequence>
+                    <element name="msg" type="string"/>
+                    <element minOccurs="0" name="msgCode" type="string"/>
+                </sequence>
+            </complexType>
+            <element name="ActivityException" type="tns:ActivityExceptionType"/>
+            <complexType name="ActivityTimedOutExceptionType">
+                <complexContent>
+                    <extension base="tns:ActivityExceptionType"/>
+                </complexContent>
+            </complexType>
+            <element name="ActivityTimedOutException" type="tns:ActivityTimedOutExceptionType"/>
+            <complexType name="DuplicateKeyExceptionType">
+                <complexContent>
+                    <extension base="tns:ActivityExceptionType">
+                        <sequence>
+                            <element name="duplicateKey" type="string"/>
+                            <element minOccurs="0" name="previousJobID" type="string"/>
+                        </sequence>
+                    </extension>
+                </complexContent>
+            </complexType>
+            <element name="DuplicateKeyException" type="tns:DuplicateKeyExceptionType"/>
+        </schema>
+        <wsdl:definitions
+            targetNamespace="http://xmlns.example.com/20190509171519"
+            xmlns:tns="http://xmlns.example.com/20190509171519"
+            xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop"
+            xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
+    </tibex:Types>
+    <tibex:ProcessInfo callable="true" createdBy="gsierra"
+        createdOn="Thu May 09 17:15:19 CDT 2019" description=""
+        extraErrorVars="true" modifiers="public"
+        productVersion="6.5.0 HF4 V99 2018-11-21" scalable="true"
+        singleton="true" stateless="false" type="IT"/>
+    <tibex:ProcessInterface context=""
+        input="{http://www.example.org/GoalsWeeklyParameterSchema}goals-weekly-v2GetParameters" output="{http://www.example.org/GoalsWeeklyResponseSchema}geographyGoals"/>
+    <tibex:ProcessTemplateConfigurations/>
+    <notation:Diagram measurementUnit="Pixel" type="BWProcess"
+        xmlns:bwnotation="http://tns.tibco.com/bw/runtime/BWNotation"
+        xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.2/notation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <children type="2001">
+            <children type="5001"/>
+            <children type="3002">
+                <styles xsi:type="notation:SortingStyle"/>
+                <styles xsi:type="notation:FilteringStyle"/>
+            </children>
+            <children type="3003">
+                <styles xsi:type="notation:SortingStyle"/>
+                <styles xsi:type="notation:FilteringStyle"/>
+            </children>
+            <children type="3004">
+                <children type="4018">
+                    <children type="3018">
+                        <children type="4020">
+                            <children type="3020">
+                                <children type="4005">
+                                    <children type="3007">
+                                    <children type="4002">
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <styles fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <styles
+                                    backgroundColor="16777215"
+                                    gradientEndColor="50431"
+                                    gradientStartColor="16777215" xsi:type="bwnotation:BackgroundStyle"/>
+                                    <element href="//0/@process/@activity/@activity/@activities.0"/>
+                                    <layoutConstraint x="-21"
+                                    xsi:type="notation:Bounds" y="2"/>
+                                    </children>
+                                    <children type="4002">
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <styles fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <styles
+                                    backgroundColor="16777215"
+                                    gradientEndColor="50431"
+                                    gradientStartColor="16777215" xsi:type="bwnotation:BackgroundStyle"/>
+                                    <element href="//0/@process/@activity/@activity/@activities.1"/>
+                                    <layoutConstraint
+                                    width="115" x="862"
+                                    xsi:type="notation:Bounds" y="2"/>
+                                    </children>
+                                    <children type="4002 bw.generalactivities.callprocess">
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <styles fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <styles
+                                    backgroundColor="16777215"
+                                    gradientEndColor="50431"
+                                    gradientStartColor="16777215" xsi:type="bwnotation:BackgroundStyle"/>
+                                    <element href="//0/@process/@activity/@activity/@activities.2"/>
+                                    <layoutConstraint
+                                    height="40" width="40"
+                                    x="109"
+                                    xsi:type="notation:Bounds" y="173"/>
+                                    </children>
+                                    <children type="4002 bw.generalactivities.mapper">
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <styles fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <styles
+                                    backgroundColor="16777215"
+                                    gradientEndColor="50431"
+                                    gradientStartColor="16777215" xsi:type="bwnotation:BackgroundStyle"/>
+                                    <element href="//0/@process/@activity/@activity/@activities.3"/>
+                                    <layoutConstraint
+                                    height="40" width="152"
+                                    x="389"
+                                    xsi:type="notation:Bounds" y="2"/>
+                                    </children>
+                                    <children type="4002 bw.internal.getSharedVariable">
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <styles fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <styles
+                                    backgroundColor="16777215"
+                                    gradientEndColor="50431"
+                                    gradientStartColor="16777215" xsi:type="bwnotation:BackgroundStyle"/>
+                                    <element href="//0/@process/@activity/@activity/@activities.4"/>
+                                    <layoutConstraint
+                                    height="40" width="40"
+                                    x="109"
+                                    xsi:type="notation:Bounds" y="2"/>
+                                    </children>
+                                    <children type="4002 bw.generalactivities.callprocess">
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <styles fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <styles
+                                    backgroundColor="16777215"
+                                    gradientEndColor="50431"
+                                    gradientStartColor="16777215" xsi:type="bwnotation:BackgroundStyle"/>
+                                    <element href="//0/@process/@activity/@activity/@activities.5"/>
+                                    <layoutConstraint
+                                    height="40" width="40"
+                                    x="728"
+                                    xsi:type="notation:Bounds" y="2"/>
+                                    </children>
+                                    <children type="4002 bw.generalactivities.callprocess">
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <styles fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <styles
+                                    backgroundColor="16777215"
+                                    gradientEndColor="50431"
+                                    gradientStartColor="16777215" xsi:type="bwnotation:BackgroundStyle"/>
+                                    <element href="//0/@process/@activity/@activity/@activities.6"/>
+                                    <layoutConstraint
+                                    height="40" width="40"
+                                    x="263"
+                                    xsi:type="notation:Bounds" y="2"/>
+                                    </children>
+                                    <children type="4002 bw.generalactivities.mapper">
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <styles fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <styles
+                                    backgroundColor="16777215"
+                                    gradientEndColor="50431"
+                                    gradientStartColor="16777215" xsi:type="bwnotation:BackgroundStyle"/>
+                                    <element href="//0/@process/@activity/@activity/@activities.7"/>
+                                    <layoutConstraint
+                                    height="40" width="187"
+                                    x="550"
+                                    xsi:type="notation:Bounds" y="2"/>
+                                    </children>
+                                    <children type="4002 com.tibco.bw.core.design.process.editor.Activity_4002_Empty">
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <styles fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <styles
+                                    backgroundColor="16777215"
+                                    gradientEndColor="50431"
+                                    gradientStartColor="16777215" xsi:type="bwnotation:BackgroundStyle"/>
+                                    <element href="//0/@process/@activity/@activity/@activities.8"/>
+                                    <layoutConstraint
+                                    height="40" width="40"
+                                    x="502"
+                                    xsi:type="notation:Bounds" y="173"/>
+                                    </children>
+                                    <styles xsi:type="notation:DrawerStyle"/>
+                                    <styles xsi:type="notation:SortingStyle"/>
+                                    <styles xsi:type="notation:FilteringStyle"/>
+                                    <element href="//0/@process/@activity/@activity"/>
+                                    </children>
+                                    <styles fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <styles backgroundColor="16777215"
+                                    gradientEndColor="50431"
+                                    gradientStartColor="16777215" xsi:type="bwnotation:BackgroundStyle"/>
+                                    <styles xsi:type="bwnotation:ResizingStyle"/>
+                                    <element href="//0/@process/@activity/@activity"/>
+                                    <layoutConstraint height="276"
+                                    width="995" xsi:type="notation:Bounds"/>
+                                </children>
+                                <styles xsi:type="notation:SortingStyle"/>
+                                <styles xsi:type="notation:FilteringStyle"/>
+                            </children>
+                            <styles fontName="Noto Sans" lineColor="0" xsi:type="notation:ShapeStyle"/>
+                            <styles xsi:type="bwnotation:BackgroundStyle"/>
+                            <styles xsi:type="bwnotation:ResizingStyle"/>
+                            <element href="//0/@process/@activity"/>
+                            <layoutConstraint height="276" width="998" xsi:type="notation:Bounds"/>
+                        </children>
+                        <styles xsi:type="notation:SortingStyle"/>
+                        <styles xsi:type="notation:FilteringStyle"/>
+                        <element href="//0/@process/@activity"/>
+                    </children>
+                    <styles fontName="Noto Sans" lineColor="0" xsi:type="notation:ShapeStyle"/>
+                    <styles xsi:type="bwnotation:BackgroundStyle"/>
+                    <styles xsi:type="bwnotation:ResizingStyle"/>
+                    <element href="//0/@process/@activity"/>
+                    <layoutConstraint height="300" width="998" x="1"
+                        xsi:type="notation:Bounds" y="1"/>
+                </children>
+                <styles xsi:type="notation:SortingStyle"/>
+                <styles xsi:type="notation:FilteringStyle"/>
+                <element href="//0/@process"/>
+            </children>
+            <styles fontName="Noto Sans" lineColor="0" xsi:type="notation:ShapeStyle"/>
+            <element href="//0/@process"/>
+            <layoutConstraint height="352" width="1340" xsi:type="notation:Bounds"/>
+        </children>
+        <styles xsi:type="notation:DiagramStyle"/>
+        <element href="//0"/>
+        <edges
+            source="//@children.0/@children.3/@children.0/@children.0/@children.0/@children.0/@children.0/@children.0/@children.0"
+            target="//@children.0/@children.3/@children.0/@children.0/@children.0/@children.0/@children.0/@children.0/@children.4" type="4006">
+            <children type="6002">
+                <layoutConstraint xsi:type="notation:Location" y="40"/>
+            </children>
+            <styles lineColor="0" xsi:type="notation:ConnectorStyle"/>
+            <styles fontName="Noto Sans" xsi:type="notation:FontStyle"/>
+            <element href="//0/@process/@activity/@activity/@links/@children.0"/>
+            <bendpoints points="[0, 0, 0, 0]$[0, 0, 0, 0]" xsi:type="notation:RelativeBendpoints"/>
+        </edges>
+        <edges
+            source="//@children.0/@children.3/@children.0/@children.0/@children.0/@children.0/@children.0/@children.0/@children.4"
+            target="//@children.0/@children.3/@children.0/@children.0/@children.0/@children.0/@children.0/@children.0/@children.2" type="4006">
+            <children type="6002">
+                <layoutConstraint xsi:type="notation:Location" y="40"/>
+            </children>
+            <styles lineColor="0" xsi:type="notation:ConnectorStyle"/>
+            <styles fontName="Noto Sans" xsi:type="notation:FontStyle"/>
+            <element href="//0/@process/@activity/@activity/@links/@children.1"/>
+            <bendpoints points="[0, 0, 0, 0]$[0, 0, 0, 0]" xsi:type="notation:RelativeBendpoints"/>
+        </edges>
+        <edges
+            source="//@children.0/@children.3/@children.0/@children.0/@children.0/@children.0/@children.0/@children.0/@children.2"
+            target="//@children.0/@children.3/@children.0/@children.0/@children.0/@children.0/@children.0/@children.0/@children.6" type="4006">
+            <children type="6002">
+                <layoutConstraint xsi:type="notation:Location" y="40"/>
+            </children>
+            <styles lineColor="0" xsi:type="notation:ConnectorStyle"/>
+            <styles fontName="Noto Sans" xsi:type="notation:FontStyle"/>
+            <element href="//0/@process/@activity/@activity/@links/@children.2"/>
+            <bendpoints points="[25, 0, -137, 0]$[138, 0, -24, 0]" xsi:type="notation:RelativeBendpoints"/>
+        </edges>
+        <edges
+            source="//@children.0/@children.3/@children.0/@children.0/@children.0/@children.0/@children.0/@children.0/@children.6"
+            target="//@children.0/@children.3/@children.0/@children.0/@children.0/@children.0/@children.0/@children.0/@children.3" type="4006">
+            <children type="6002">
+                <layoutConstraint xsi:type="notation:Location" y="40"/>
+            </children>
+            <styles lineColor="0" xsi:type="notation:ConnectorStyle"/>
+            <styles fontName="Noto Sans" xsi:type="notation:FontStyle"/>
+            <element href="//0/@process/@activity/@activity/@links/@children.3"/>
+            <bendpoints points="[7, -24, 6, 147]$[7, -146, 6, 25]" xsi:type="notation:RelativeBendpoints"/>
+        </edges>
+        <edges
+            source="//@children.0/@children.3/@children.0/@children.0/@children.0/@children.0/@children.0/@children.0/@children.3"
+            target="//@children.0/@children.3/@children.0/@children.0/@children.0/@children.0/@children.0/@children.0/@children.7" type="4006">
+            <children type="6002">
+                <layoutConstraint xsi:type="notation:Location" y="40"/>
+            </children>
+            <styles lineColor="0" xsi:type="notation:ConnectorStyle"/>
+            <styles fontName="Noto Sans" xsi:type="notation:FontStyle"/>
+            <element href="//0/@process/@activity/@activity/@links/@children.4"/>
+            <bendpoints points="[39, 0, -116, 0]$[131, 0, -24, 0]" xsi:type="notation:RelativeBendpoints"/>
+        </edges>
+        <edges
+            source="//@children.0/@children.3/@children.0/@children.0/@children.0/@children.0/@children.0/@children.0/@children.7"
+            target="//@children.0/@children.3/@children.0/@children.0/@children.0/@children.0/@children.0/@children.0/@children.5" type="4006">
+            <children type="6002">
+                <layoutConstraint xsi:type="notation:Location" y="40"/>
+            </children>
+            <styles lineColor="0" xsi:type="notation:ConnectorStyle"/>
+            <styles fontName="Noto Sans" xsi:type="notation:FontStyle"/>
+            <element href="//0/@process/@activity/@activity/@links/@children.5"/>
+            <bendpoints points="[0, 25, 0, -146]$[0, 147, 0, -24]" xsi:type="notation:RelativeBendpoints"/>
+        </edges>
+        <edges
+            source="//@children.0/@children.3/@children.0/@children.0/@children.0/@children.0/@children.0/@children.0/@children.5"
+            target="//@children.0/@children.3/@children.0/@children.0/@children.0/@children.0/@children.0/@children.0/@children.1" type="4006">
+            <children type="6002">
+                <layoutConstraint xsi:type="notation:Location" y="40"/>
+            </children>
+            <styles lineColor="0" xsi:type="notation:ConnectorStyle"/>
+            <styles fontName="Noto Sans" xsi:type="notation:FontStyle"/>
+            <element href="//0/@process/@activity/@activity/@links/@children.6"/>
+            <bendpoints points="[25, 0, -132, 0]$[133, 0, -24, 0]" xsi:type="notation:RelativeBendpoints"/>
+        </edges>
+        <edges
+            source="//@children.0/@children.3/@children.0/@children.0/@children.0/@children.0/@children.0/@children.0/@children.2"
+            target="//@children.0/@children.3/@children.0/@children.0/@children.0/@children.0/@children.0/@children.0/@children.8" type="4006">
+            <children type="6002">
+                <layoutConstraint xsi:type="notation:Location" y="40"/>
+            </children>
+            <styles lineColor="0" xsi:type="notation:ConnectorStyle"/>
+            <styles fontName="Noto Sans" xsi:type="notation:FontStyle"/>
+            <element href="//0/@process/@activity/@activity/@links/@children.7"/>
+            <bendpoints points="[25, 0, -368, 0]$[369, 0, -24, 0]" xsi:type="notation:RelativeBendpoints"/>
+        </edges>
+        <edges
+            source="//@children.0/@children.3/@children.0/@children.0/@children.0/@children.0/@children.0/@children.0/@children.8"
+            target="//@children.0/@children.3/@children.0/@children.0/@children.0/@children.0/@children.0/@children.0/@children.1" type="4006">
+            <children type="6002">
+                <layoutConstraint xsi:type="notation:Location" y="40"/>
+            </children>
+            <styles lineColor="0" xsi:type="notation:ConnectorStyle"/>
+            <styles fontName="Noto Sans" xsi:type="notation:FontStyle"/>
+            <element href="//0/@process/@activity/@activity/@links/@children.8"/>
+            <bendpoints
+                points="[25, 0, -335, 171]$[296, 0, -64, 171]$[296, -171, -64, 0]$[336, -171, -24, 0]" xsi:type="notation:RelativeBendpoints"/>
+        </edges>
+    </notation:Diagram>
+    <tibex:NamespaceRegistry enabled="true">
+        <tibex:namespaceItem
+            namespace="http://www.example.org/GoalsWeeklyParameterSchema" prefix="tns"/>
+        <tibex:namespaceItem
+            namespace="http://www.example.org/GoalsWeeklyRequestInterfaceSchema" prefix="tns1"/>
+        <tibex:namespaceItem
+            namespace="http://www.example.org/GoalsWeeklyResponseSchema" prefix="tns2"/>
+        <tibex:namespaceItem
+            namespace="http://www.example.org/GoalsWeeklyResponseInterfaceSchema" prefix="tns3"/>
+        <tibex:namespaceItem
+            namespace="http://www.example.com/namespaces/marketing/TransactionLogDataAccess" prefix="tns4"/>
+        <tibex:namespaceItem
+            namespace="http://www.tibco.com/bw/xpath/bw-custom-functions" prefix="bw"/>
+        <tibex:namespaceItem
+            namespace="http://www.tibco.com/bw/xslt/custom-functions" prefix="tib"/>
+        <tibex:namespaceItem
+            namespace="http://www.example.org/GoalsWeeklyRequestParseXMLSchema" prefix="tns5"/>
+        <tibex:namespaceItem
+            namespace="http://www.example.org/GoalsWeeklyResponseParseXMLSchema" prefix="tns6"/>
+        <tibex:namespaceItem
+            namespace="http://www.w3.org/2001/XMLSchema" prefix="xsd"/>
+    </tibex:NamespaceRegistry>
+    <bpws:import importType="http://www.w3.org/2001/XMLSchema" namespace="http://www.example.org/GoalsWeeklyParameterSchema"/>
+    <bpws:import importType="http://www.w3.org/2001/XMLSchema" namespace="http://www.example.org/GoalsWeeklyResponseSchema"/>
+    <bpws:import importType="http://www.w3.org/2001/XMLSchema" namespace="http://www.example.org/GoalsWeeklyRequestInterfaceSchema"/>
+    <bpws:import importType="http://www.w3.org/2001/XMLSchema" namespace="http://www.example.org/GoalsWeeklyResponseInterfaceSchema"/>
+    <bpws:import importType="http://www.w3.org/2001/XMLSchema" namespace="http://www.example.com/namespaces/marketing/TransactionLogDataAccess"/>
+    <bpws:import importType="http://www.w3.org/2001/XMLSchema" namespace="http://www.example.org/GoalsWeeklyRequestParseXMLSchema"/>
+    <bpws:import importType="http://www.w3.org/2001/XMLSchema" namespace="http://www.example.org/GoalsWeeklyResponseParseXMLSchema"/>
+    <bpws:variables>
+        <bpws:variable element="ns:ProcessContext"
+            name="_processContext" sca-bpel:internal="true"/>
+        <bpws:variable element="ns0:goals-weekly-v2GetParameters"
+            name="start" sca-bpel:internal="true" tibex:parameter="in"/>
+        <bpws:variable element="ns1:geographyGoals"
+            name="goalsWeeklyResultMapper-input" sca-bpel:internal="true"/>
+        <bpws:variable element="ns1:geographyGoals"
+            name="goalsWeeklyResultMapper" sca-bpel:internal="true"/>
+        <bpws:variable name="getTransactionId" sca-bpel:internal="true" type="xsd:string"/>
+        <bpws:variable element="ns4:Logger" name="loggerResponse-input" sca-bpel:internal="true"/>
+        <bpws:variable element="ns5:goalsWeeklylyParseRequest"
+            name="goalsWeeklyParse-input" sca-bpel:internal="true"/>
+        <bpws:variable element="ns6:goalsWeeklyParseResponse"
+            name="goalsWeeklyParse" sca-bpel:internal="true"/>
+        <bpws:variable element="ns1:geographyGoals"
+            name="goalsWeeklyResultTotalMapper-input" sca-bpel:internal="true"/>
+        <bpws:variable element="ns1:geographyGoals"
+            name="goalsWeeklyResultTotalMapper" sca-bpel:internal="true"/>
+        <bpws:variable element="ns1:geographyGoals" name="end-input"
+            sca-bpel:internal="true" tibex:parameter="out"/>
+        <bpws:variable element="ns2:goalsWeeklyRequestInterface"
+            name="goalsWeeklyInterface-input" sca-bpel:internal="true"/>
+        <bpws:variable element="ns3:goalsWeeklyResponseInterface"
+            name="goalsWeeklyInterface" sca-bpel:internal="true"/>
+    </bpws:variables>
+    <bpws:extensions>
+        <bpws:extension mustUnderstand="no" namespace="http://www.eclipse.org/gmf/runtime/1.0.2/notation"/>
+        <bpws:extension mustUnderstand="no" namespace="http://www.tibco.com/bw/process/info"/>
+        <bpws:extension mustUnderstand="no" namespace="http://docs.oasis-open.org/ns/opencsa/sca-bpel/200801"/>
+        <bpws:extension mustUnderstand="no" namespace="http://docs.oasis-open.org/ns/opencsa/sca/200912"/>
+        <bpws:extension mustUnderstand="no" namespace="http://ns.tibco.com/bw/property"/>
+        <bpws:extension mustUnderstand="no" namespace="http://www.tibco.com/bpel/2007/extensions"/>
+    </bpws:extensions>
+    <bpws:scope name="scope">
+        <bpws:flow name="flow">
+            <bpws:links>
+                <bpws:link name="StartToEnd" tibex:linkType="SUCCESS"/>
+                <bpws:link name="getTransactionIdTogoalsWeeklyInterface" tibex:linkType="SUCCESS"/>
+                <bpws:link name="goalsWeeklyInterfaceTogoalsWeeklyParse" tibex:linkType="SUCCESSWITHCONDITION"/>
+                <bpws:link
+                    name="goalsWeeklyParseTogoalsWeeklyResultMapper" tibex:linkType="SUCCESS"/>
+                <bpws:link name="goalsWeeklyResultMapperToMapper" tibex:linkType="SUCCESS"/>
+                <bpws:link name="MapperTologgerResponse" tibex:linkType="SUCCESS"/>
+                <bpws:link name="loggerResponseToend" tibex:linkType="SUCCESS"/>
+                <bpws:link name="goalsWeeklyInterfaceToEmpty" tibex:linkType="SUCCESSWITHNOCONDITION"/>
+                <bpws:link name="EmptyToend" tibex:linkType="SUCCESS"/>
+            </bpws:links>
+            <bpws:extensionActivity>
+                <tibex:receiveEvent createInstance="yes"
+                    eventTimeout="0" name="start"
+                    tibex:xpdlId="31bf5aca-d5e0-4dcf-872f-c1f3139b10f9"
+                    variable="start" xmlns:tibex="http://www.tibco.com/bpel/2007/extensions">
+                    <bpws:sources>
+                        <bpws:source linkName="StartToEnd"/>
+                    </bpws:sources>
+                    <tibex:eventSource>
+                        <tibex:StartEvent xmlns:tibex="http://www.tibco.com/bpel/2007/extensions"/>
+                    </tibex:eventSource>
+                </tibex:receiveEvent>
+            </bpws:extensionActivity>
+            <bpws:extensionActivity>
+                <tibex:activityExtension inputVariable="end-input"
+                    name="end"
+                    tibex:xpdlId="cc52fd4b-17d2-47e5-afb9-e3003fb14254" xmlns:tibex="http://www.tibco.com/bpel/2007/extensions">
+                    <bpws:targets>
+                        <bpws:target linkName="loggerResponseToend"/>
+                        <bpws:target linkName="EmptyToend"/>
+                    </bpws:targets>
+                    <tibex:inputBindings>
+                        <tibex:inputBinding
+                            expression="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xa;&lt;xsl:stylesheet xmlns:xsl=&quot;http://www.w3.org/1999/XSL/Transform&quot; xmlns:tns2=&quot;http://www.example.org/GoalsWeeklyResponseSchema&quot; version=&quot;2.0&quot;>&lt;xsl:param name=&quot;goalsWeeklyResultTotalMapper&quot;/>&lt;xsl:template name=&quot;end-input&quot; match=&quot;/&quot;>&lt;tns2:geographyGoals>&lt;xsl:choose>&lt;xsl:when test=&quot;exists($goalsWeeklyResultTotalMapper)&quot;>&lt;xsl:copy-of select=&quot;$goalsWeeklyResultTotalMapper/tns2:goalsWeekly&quot;/>&lt;/xsl:when>&lt;xsl:otherwise>&lt;tns2:goalsWeekly/>&lt;/xsl:otherwise>&lt;/xsl:choose>&lt;xsl:choose>&lt;xsl:when test=&quot;exists($goalsWeeklyResultTotalMapper)&quot;>&lt;xsl:copy-of select=&quot;$goalsWeeklyResultTotalMapper/tns2:totalGoals&quot;/>&lt;/xsl:when>&lt;xsl:otherwise>&lt;tns2:totalGoals/>&lt;/xsl:otherwise>&lt;/xsl:choose>&lt;xsl:choose>&lt;xsl:when test=&quot;exists($goalsWeeklyResultTotalMapper)&quot;>&lt;xsl:copy-of select=&quot;$goalsWeeklyResultTotalMapper/tns2:catalogLines&quot;/>&lt;/xsl:when>&lt;xsl:otherwise>&lt;tns2:catalogLines/>&lt;/xsl:otherwise>&lt;/xsl:choose>&lt;/tns2:geographyGoals>&lt;/xsl:template>&lt;/xsl:stylesheet>" expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xslt1.0"/>
+                    </tibex:inputBindings>
+                    <tibex:config>
+                        <bwext:BWActivity
+                            activityTypeID="bw.internal.end"
+                            xmlns:activityconfig="http://tns.tibco.com/bw/model/activityconfig"
+                            xmlns:bwext="http://tns.tibco.com/bw/model/core/bwext"
+                            xmlns:internalactivities="http://ns.tibco.com/bw/core/internalactivity" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                            <activityConfig>
+                                <properties name="config" xsi:type="activityconfig:EMFProperty">
+                                    <type href="http://ns.tibco.com/bw/core/internalactivity#//End"/>
+                                    <value xsi:type="internalactivities:End"/>
+                                </properties>
+                            </activityConfig>
+                        </bwext:BWActivity>
+                    </tibex:config>
+                </tibex:activityExtension>
+            </bpws:extensionActivity>
+            <bpws:extensionActivity>
+                <tibex:extActivity
+                    inputVariable="goalsWeeklyInterface-input"
+                    name="goalsWeeklyInterface"
+                    outputVariable="goalsWeeklyInterface"
+                    tibex:xpdlId="8b37536a-9a8c-4dd6-b3b4-35eaa71f60d4"
+                    type="bw.generalactivities.callprocess" xmlns:tibex="http://www.tibco.com/bpel/2007/extensions">
+                    <bpws:targets>
+                        <bpws:target linkName="getTransactionIdTogoalsWeeklyInterface"/>
+                    </bpws:targets>
+                    <bpws:sources>
+                        <bpws:source linkName="goalsWeeklyInterfaceTogoalsWeeklyParse">
+                            <tibex:DesignExpression>
+                                <tibex:expression
+                                    expression="count($goalsWeeklyInterface/ns3:resulSet) > 0" expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath2.0"/>
+                            </tibex:DesignExpression>
+                            <bpws:transitionCondition expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath2.0"><![CDATA[count($goalsWeeklyInterface/ns3:resulSet) > 0]]></bpws:transitionCondition>
+                        </bpws:source>
+                        <bpws:source linkName="goalsWeeklyInterfaceToEmpty">
+                            <tibex:DesignExpression>
+                                <tibex:expression
+                                    expression="##otherwise##" expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath2.0"/>
+                            </tibex:DesignExpression>
+                            <bpws:transitionCondition expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath2.0"><![CDATA[##otherwise##]]></bpws:transitionCondition>
+                        </bpws:source>
+                    </bpws:sources>
+                    <tibex:inputBindings>
+                        <tibex:inputBinding
+                            expression="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xa;&lt;xsl:stylesheet xmlns:xsl=&quot;http://www.w3.org/1999/XSL/Transform&quot; xmlns:tns=&quot;http://www.example.org/GoalsWeeklyParameterSchema&quot; xmlns:tns1=&quot;http://www.example.org/GoalsWeeklyRequestInterfaceSchema&quot; version=&quot;2.0&quot;>&lt;xsl:param name=&quot;start&quot;/>&lt;xsl:template name=&quot;goalsWeeklyInterface-input&quot; match=&quot;/&quot;>&lt;tns1:goalsWeeklyRequestInterface>&lt;tns1:geographyId>&lt;xsl:value-of select=&quot;$start/tns:geographyId&quot;/>&lt;/tns1:geographyId>&lt;tns1:date>&lt;xsl:value-of select=&quot;$start/tns:date&quot;/>&lt;/tns1:date>&lt;/tns1:goalsWeeklyRequestInterface>&lt;/xsl:template>&lt;/xsl:stylesheet>" expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xslt1.0"/>
+                    </tibex:inputBindings>
+                    <tibex:CallProcess
+                        subProcessName="mx.com.elektra.portfoliomanagement.goals.weekly.v2.GoalsWeeklyInterface" xmlns:tibex="http://www.tibco.com/bpel/2007/extensions">
+                        <dynamicNameExpression
+                            body="ACED000574005E636F6E63617428226D782E636F6D2E656C656B7472612E706F7274666F6C696F6D616E6167656D656E742E676F616C732E7765656B6C792E76322E476F616C735765656B6C79222C202473746172742F6E73303A67656F67726170687929" expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath2.0"/>
+                        <dynamicNameDesignExpression>
+                            <expression
+                                body="ACED000574005E636F6E63617428226D782E636F6D2E656C656B7472612E706F7274666F6C696F6D616E6167656D656E742E676F616C732E7765656B6C792E76322E476F616C735765656B6C79222C202473746172742F6E73303A67656F67726170687929" expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath2.0"/>
+                        </dynamicNameDesignExpression>
+                    </tibex:CallProcess>
+                </tibex:extActivity>
+            </bpws:extensionActivity>
+            <bpws:extensionActivity>
+                <tibex:activityExtension
+                    inputVariable="goalsWeeklyResultMapper-input"
+                    name="goalsWeeklyResultMapper"
+                    outputVariable="goalsWeeklyResultMapper"
+                    tibex:xpdlId="02c9c044-70c1-4ebd-af8c-175509feab4c" xmlns:tibex="http://www.tibco.com/bpel/2007/extensions">
+                    <bpws:targets>
+                        <bpws:target linkName="goalsWeeklyParseTogoalsWeeklyResultMapper"/>
+                    </bpws:targets>
+                    <bpws:sources>
+                        <bpws:source linkName="goalsWeeklyResultMapperToMapper"/>
+                    </bpws:sources>
+                    <tibex:inputBindings>
+                        <tibex:inputBinding
+                            expression="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xa;&lt;xsl:stylesheet xmlns:xsl=&quot;http://www.w3.org/1999/XSL/Transform&quot; xmlns:tns6=&quot;http://www.example.org/GoalsWeeklyResponseParseXMLSchema&quot; xmlns:tns2=&quot;http://www.example.org/GoalsWeeklyResponseSchema&quot; version=&quot;2.0&quot;>&lt;xsl:param name=&quot;goalsWeeklyParse&quot;/>&lt;xsl:template name=&quot;goalsWeeklyResultMapper-input&quot; match=&quot;/&quot;>&lt;tns2:geographyGoals>&lt;xsl:for-each select=&quot;$goalsWeeklyParse/tns6:parseResponse&quot;>&lt;tns2:goalsWeekly>&lt;xsl:if test=&quot;tns6:geographyId&quot;>&lt;tns2:geographyId>&lt;xsl:value-of select=&quot;tns6:geographyId&quot;/>&lt;/tns2:geographyId>&lt;/xsl:if>&lt;xsl:if test=&quot;tns6:geographyDescription&quot;>&lt;tns2:geographyDescription>&lt;xsl:value-of select=&quot;tns6:geographyDescription&quot;/>&lt;/tns2:geographyDescription>&lt;/xsl:if>&lt;xsl:for-each select=&quot;tns6:line&quot;>&lt;tns2:line>&lt;xsl:if test=&quot;tns6:productId&quot;>&lt;tns2:productId>&lt;xsl:value-of select=&quot;tns6:productId&quot;/>&lt;/tns2:productId>&lt;/xsl:if>&lt;tns2:totalSales>&lt;xsl:if test=&quot;tns6:totalGoals&quot;>&lt;tns2:goal>&lt;xsl:value-of select=&quot;tns6:totalGoals&quot;/>&lt;/tns2:goal>&lt;/xsl:if>&lt;xsl:if test=&quot;tns6:totalAccumulated&quot;>&lt;tns2:accumulated>&lt;xsl:value-of select=&quot;tns6:totalAccumulated&quot;/>&lt;/tns2:accumulated>&lt;/xsl:if>&lt;xsl:if test=&quot;tns6:totalMissing&quot;>&lt;tns2:missing>&lt;xsl:value-of select=&quot;tns6:totalMissing&quot;/>&lt;/tns2:missing>&lt;/xsl:if>&lt;/tns2:totalSales>&lt;tns2:creditSales>&lt;xsl:if test=&quot;tns6:creditGoals&quot;>&lt;tns2:goal>&lt;xsl:value-of select=&quot;tns6:creditGoals&quot;/>&lt;/tns2:goal>&lt;/xsl:if>&lt;xsl:if test=&quot;tns6:creditAccumulated&quot;>&lt;tns2:accumulated>&lt;xsl:value-of select=&quot;tns6:creditAccumulated&quot;/>&lt;/tns2:accumulated>&lt;/xsl:if>&lt;xsl:if test=&quot;tns6:creditMissing&quot;>&lt;tns2:missing>&lt;xsl:value-of select=&quot;tns6:creditMissing&quot;/>&lt;/tns2:missing>&lt;/xsl:if>&lt;/tns2:creditSales>&lt;tns2:countedSales>&lt;xsl:if test=&quot;tns6:countedGoals&quot;>&lt;tns2:goal>&lt;xsl:value-of select=&quot;tns6:countedGoals&quot;/>&lt;/tns2:goal>&lt;/xsl:if>&lt;xsl:if test=&quot;tns6:countedAccumulated&quot;>&lt;tns2:accumulated>&lt;xsl:value-of select=&quot;tns6:countedAccumulated&quot;/>&lt;/tns2:accumulated>&lt;/xsl:if>&lt;xsl:if test=&quot;tns6:countedMissing&quot;>&lt;tns2:missing>&lt;xsl:value-of select=&quot;tns6:countedMissing&quot;/>&lt;/tns2:missing>&lt;/xsl:if>&lt;/tns2:countedSales>&lt;/tns2:line>&lt;/xsl:for-each>&lt;tns2:totalLine>&lt;tns2:totalSales>&lt;xsl:if test=&quot;tns6:totalLines/tns6:totalGoals&quot;>&lt;tns2:goal>&lt;xsl:value-of select=&quot;tns6:totalLines/tns6:totalGoals&quot;/>&lt;/tns2:goal>&lt;/xsl:if>&lt;xsl:if test=&quot;tns6:totalLines/tns6:totalAccumulated&quot;>&lt;tns2:accumulated>&lt;xsl:value-of select=&quot;tns6:totalLines/tns6:totalAccumulated&quot;/>&lt;/tns2:accumulated>&lt;/xsl:if>&lt;xsl:if test=&quot;tns6:totalLines/tns6:totalMissing&quot;>&lt;tns2:missing>&lt;xsl:value-of select=&quot;tns6:totalLines/tns6:totalMissing&quot;/>&lt;/tns2:missing>&lt;/xsl:if>&lt;/tns2:totalSales>&lt;tns2:creditSales>&lt;xsl:if test=&quot;tns6:totalLines/tns6:creditGoals&quot;>&lt;tns2:goal>&lt;xsl:value-of select=&quot;tns6:totalLines/tns6:creditGoals&quot;/>&lt;/tns2:goal>&lt;/xsl:if>&lt;xsl:if test=&quot;tns6:totalLines/tns6:creditAccumulated&quot;>&lt;tns2:accumulated>&lt;xsl:value-of select=&quot;tns6:totalLines/tns6:creditAccumulated&quot;/>&lt;/tns2:accumulated>&lt;/xsl:if>&lt;xsl:if test=&quot;tns6:totalLines/tns6:creditMissing&quot;>&lt;tns2:missing>&lt;xsl:value-of select=&quot;tns6:totalLines/tns6:creditMissing&quot;/>&lt;/tns2:missing>&lt;/xsl:if>&lt;/tns2:creditSales>&lt;tns2:countedSales>&lt;xsl:if test=&quot;tns6:totalLines/tns6:countedGoals&quot;>&lt;tns2:goal>&lt;xsl:value-of select=&quot;tns6:totalLines/tns6:countedGoals&quot;/>&lt;/tns2:goal>&lt;/xsl:if>&lt;xsl:if test=&quot;tns6:totalLines/tns6:countedAccumulated&quot;>&lt;tns2:accumulated>&lt;xsl:value-of select=&quot;tns6:totalLines/tns6:countedAccumulated&quot;/>&lt;/tns2:accumulated>&lt;/xsl:if>&lt;xsl:if test=&quot;tns6:totalLines/tns6:countedMissing&quot;>&lt;tns2:missing>&lt;xsl:value-of select=&quot;tns6:totalLines/tns6:countedMissing&quot;/>&lt;/tns2:missing>&lt;/xsl:if>&lt;/tns2:countedSales>&lt;/tns2:totalLine>&lt;/tns2:goalsWeekly>&lt;/xsl:for-each>&lt;/tns2:geographyGoals>&lt;/xsl:template>&lt;/xsl:stylesheet>" expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xslt1.0"/>
+                    </tibex:inputBindings>
+                    <tibex:config>
+                        <bwext:BWActivity
+                            activityTypeID="bw.generalactivities.mapper"
+                            version="6.0.0.001"
+                            xmlns:GoalsWeeklyResponseSchema="http://www.example.org/GoalsWeeklyResponseSchema"
+                            xmlns:activityconfig="http://tns.tibco.com/bw/model/activityconfig"
+                            xmlns:bwext="http://tns.tibco.com/bw/model/core/bwext"
+                            xmlns:generalactivities="http://ns.tibco.com/bw/palette/generalactivities" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                            <activityConfig>
+                                <properties name="config" xsi:type="activityconfig:EMFProperty">
+                                    <type href="http://ns.tibco.com/bw/palette/generalactivities#//Mapper"/>
+                                    <value
+                                    inputQName="GoalsWeeklyResponseSchema:geographyGoals" xsi:type="generalactivities:Mapper"/>
+                                </properties>
+                            </activityConfig>
+                        </bwext:BWActivity>
+                    </tibex:config>
+                </tibex:activityExtension>
+            </bpws:extensionActivity>
+            <bpws:extensionActivity>
+                <tibex:extActivity name="getTransactionId"
+                    outputVariable="getTransactionId"
+                    tibex:xpdlId="ff992696-877d-4886-8fef-94f542ef7606"
+                    type="bw.internal.getSharedVariable" xmlns:tibex="http://www.tibco.com/bpel/2007/extensions">
+                    <bpws:targets>
+                        <bpws:target linkName="StartToEnd"/>
+                    </bpws:targets>
+                    <bpws:sources>
+                        <bpws:source linkName="getTransactionIdTogoalsWeeklyInterface"/>
+                    </bpws:sources>
+                    <tibex:GetSharedVariable inline="true"
+                        variableName="transactionId" xmlns:tibex="http://www.tibco.com/bpel/2007/extensions"/>
+                </tibex:extActivity>
+            </bpws:extensionActivity>
+            <bpws:extensionActivity>
+                <tibex:extActivity inputVariable="loggerResponse-input"
+                    name="loggerResponse"
+                    tibex:xpdlId="c7ce6c66-5c74-4c1a-bca5-f2ce516f01e0"
+                    type="bw.generalactivities.callprocess" xmlns:tibex="http://www.tibco.com/bpel/2007/extensions">
+                    <bpws:targets>
+                        <bpws:target linkName="MapperTologgerResponse"/>
+                    </bpws:targets>
+                    <bpws:sources>
+                        <bpws:source linkName="loggerResponseToend"/>
+                    </bpws:sources>
+                    <tibex:inputBindings>
+                        <tibex:inputBinding
+                            expression="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xa;&lt;xsl:stylesheet xmlns:xsl=&quot;http://www.w3.org/1999/XSL/Transform&quot; xmlns:tns4=&quot;http://www.example.com/namespaces/marketing/TransactionLogDataAccess&quot; xmlns:tns=&quot;http://www.example.org/GoalsWeeklyParameterSchema&quot; xmlns:bw=&quot;http://www.tibco.com/bw/xpath/bw-custom-functions&quot; xmlns:tib=&quot;http://www.tibco.com/bw/xslt/custom-functions&quot; version=&quot;2.0&quot;>&lt;xsl:param name=&quot;getTransactionId&quot;/>&lt;xsl:param name=&quot;start&quot;/>&lt;xsl:param name=&quot;goalsWeeklyResultMapper&quot;/>&lt;xsl:template name=&quot;loggerResponse-input&quot; match=&quot;/&quot;>&lt;tns4:Logger>&lt;tns4:transactionId>&lt;xsl:value-of select=&quot;$getTransactionId&quot;/>&lt;/tns4:transactionId>&lt;tns4:startDateTime>&lt;xsl:value-of select=&quot;current-dateTime()&quot;/>&lt;/tns4:startDateTime>&lt;tns4:instance>&lt;xsl:value-of select=&quot;bw:getModuleProperty(&amp;quot;BW.APPNODE.NAME&amp;quot;)&quot;/>&lt;/tns4:instance>&lt;tns4:businessReference>&lt;xsl:value-of select=&quot;concat(&amp;quot;Geografía: &amp;quot;, string($start/tns:geography))&quot;/>&lt;/tns4:businessReference>&lt;tns4:serviceName>&lt;xsl:value-of select=&quot;bw:getModuleProperty(&amp;quot;BW.APPLICATION.NAME&amp;quot;)&quot;/>&lt;/tns4:serviceName>&lt;tns4:operationName>&lt;xsl:value-of select=&quot;&amp;quot;GoalsWeekly&amp;quot;&quot;/>&lt;/tns4:operationName>&lt;tns4:detailTransaction>&lt;tns4:transactionDateTime>&lt;xsl:value-of select=&quot;current-dateTime()&quot;/>&lt;/tns4:transactionDateTime>&lt;tns4:transactionMsg>&lt;xsl:value-of select=&quot;tib:render-xml($goalsWeeklyResultMapper, false(), true())&quot;/>&lt;/tns4:transactionMsg>&lt;tns4:transactionType>&lt;xsl:value-of select=&quot;&amp;quot;GoalsWeekly&amp;quot;&quot;/>&lt;/tns4:transactionType>&lt;/tns4:detailTransaction>&lt;/tns4:Logger>&lt;/xsl:template>&lt;/xsl:stylesheet>" expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xslt1.0"/>
+                    </tibex:inputBindings>
+                    <tibex:CallProcess
+                        moduleRef="TransactionLogSharedModule"
+                        subProcessName="com.elektra.transactionlog.shared.logger.v1.LoggerInvoker" xmlns:tibex="http://www.tibco.com/bpel/2007/extensions"/>
+                </tibex:extActivity>
+            </bpws:extensionActivity>
+            <bpws:extensionActivity>
+                <tibex:extActivity
+                    inputVariable="goalsWeeklyParse-input"
+                    name="goalsWeeklyParse"
+                    outputVariable="goalsWeeklyParse"
+                    tibex:xpdlId="778a5b39-7c9b-45c7-9d35-2e37305f9d7a"
+                    type="bw.generalactivities.callprocess" xmlns:tibex="http://www.tibco.com/bpel/2007/extensions">
+                    <bpws:targets>
+                        <bpws:target linkName="goalsWeeklyInterfaceTogoalsWeeklyParse"/>
+                    </bpws:targets>
+                    <bpws:sources>
+                        <bpws:source linkName="goalsWeeklyParseTogoalsWeeklyResultMapper"/>
+                    </bpws:sources>
+                    <tibex:inputBindings>
+                        <tibex:inputBinding
+                            expression="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xa;&lt;xsl:stylesheet xmlns:xsl=&quot;http://www.w3.org/1999/XSL/Transform&quot; xmlns:tns5=&quot;http://www.example.org/GoalsWeeklyRequestParseXMLSchema&quot; xmlns:tns3=&quot;http://www.example.org/GoalsWeeklyResponseInterfaceSchema&quot; version=&quot;2.0&quot;>&lt;xsl:param name=&quot;goalsWeeklyInterface&quot;/>&lt;xsl:template name=&quot;goalsWeeklyParse-input&quot; match=&quot;/&quot;>&lt;tns5:goalsWeeklylyParseRequest>&lt;xsl:for-each select=&quot;$goalsWeeklyInterface/tns3:resulSet&quot;>&lt;tns5:parseRequest>&lt;xsl:if test=&quot;tns3:geographyId&quot;>&lt;tns5:geographyId>&lt;xsl:value-of select=&quot;tns3:geographyId&quot;/>&lt;/tns5:geographyId>&lt;/xsl:if>&lt;xsl:if test=&quot;tns3:description&quot;>&lt;tns5:description>&lt;xsl:value-of select=&quot;tns3:description&quot;/>&lt;/tns5:description>&lt;/xsl:if>&lt;xsl:if test=&quot;tns3:goals&quot;>&lt;tns5:goals>&lt;xsl:value-of select=&quot;tns3:goals&quot;/>&lt;/tns5:goals>&lt;/xsl:if>&lt;/tns5:parseRequest>&lt;/xsl:for-each>&lt;/tns5:goalsWeeklylyParseRequest>&lt;/xsl:template>&lt;/xsl:stylesheet>" expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xslt1.0"/>
+                    </tibex:inputBindings>
+                    <tibex:CallProcess
+                        subProcessName="mx.com.elektra.portfoliomanagement.goals.weekly.v2.GoalsWeeklyParse" xmlns:tibex="http://www.tibco.com/bpel/2007/extensions"/>
+                </tibex:extActivity>
+            </bpws:extensionActivity>
+            <bpws:extensionActivity>
+                <tibex:activityExtension
+                    inputVariable="goalsWeeklyResultTotalMapper-input"
+                    name="goalsWeeklyResultTotalMapper"
+                    outputVariable="goalsWeeklyResultTotalMapper"
+                    tibex:xpdlId="01cdfa9a-ac56-4e31-af08-e53997f88716" xmlns:tibex="http://www.tibco.com/bpel/2007/extensions">
+                    <bpws:targets>
+                        <bpws:target linkName="goalsWeeklyResultMapperToMapper"/>
+                    </bpws:targets>
+                    <bpws:sources>
+                        <bpws:source linkName="MapperTologgerResponse"/>
+                    </bpws:sources>
+                    <tibex:inputBindings>
+                        <tibex:inputBinding
+                            expression="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xa;&lt;xsl:stylesheet xmlns:xsl=&quot;http://www.w3.org/1999/XSL/Transform&quot; xmlns:tns2=&quot;http://www.example.org/GoalsWeeklyResponseSchema&quot; xmlns:tns6=&quot;http://www.example.org/GoalsWeeklyResponseParseXMLSchema&quot; xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot; version=&quot;2.0&quot;>&lt;xsl:param name=&quot;goalsWeeklyParse&quot;/>&lt;xsl:param name=&quot;goalsWeeklyResultMapper&quot;/>&lt;xsl:template name=&quot;goalsWeeklyResultTotalMapper-input&quot; match=&quot;/&quot;>&lt;tns2:geographyGoals>&lt;xsl:variable name=&quot;productIdArray&quot; select=&quot;tokenize($goalsWeeklyParse/tns6:arrayProduct/tns6:arrayProductId, &amp;quot;#&amp;quot;)&quot;/>&lt;xsl:copy-of select=&quot;$goalsWeeklyResultMapper/tns2:goalsWeekly&quot;/>&lt;tns2:totalGoals>&lt;xsl:for-each select=&quot;$productIdArray&quot;>&lt;tns2:line>&lt;xsl:variable name=&quot;currentProductId&quot; select=&quot;xsd:integer(current())&quot;/>&lt;tns2:productId>&lt;xsl:value-of select=&quot;$currentProductId&quot;/>&lt;/tns2:productId>&lt;tns2:totalSales>&lt;tns2:goal>&lt;xsl:value-of select=&quot;sum($goalsWeeklyResultMapper/tns2:goalsWeekly/tns2:line[tns2:productId = $currentProductId]/tns2:totalSales/tns2:goal)&quot;/>&lt;/tns2:goal>&lt;tns2:accumulated>&lt;xsl:value-of select=&quot;sum($goalsWeeklyResultMapper/tns2:goalsWeekly/tns2:line[tns2:productId = $currentProductId]/tns2:totalSales/tns2:accumulated)&quot;/>&lt;/tns2:accumulated>&lt;tns2:missing>&lt;xsl:value-of select=&quot;sum($goalsWeeklyResultMapper/tns2:goalsWeekly/tns2:line[tns2:productId = $currentProductId]/tns2:totalSales/tns2:missing)&quot;/>&lt;/tns2:missing>&lt;/tns2:totalSales>&lt;tns2:creditSales>&lt;tns2:goal>&lt;xsl:value-of select=&quot;sum($goalsWeeklyResultMapper/tns2:goalsWeekly/tns2:line[tns2:productId = $currentProductId]/tns2:creditSales/tns2:goal)&quot;/>&lt;/tns2:goal>&lt;tns2:accumulated>&lt;xsl:value-of select=&quot;sum($goalsWeeklyResultMapper/tns2:goalsWeekly/tns2:line[tns2:productId = $currentProductId]/tns2:creditSales/tns2:accumulated)&quot;/>&lt;/tns2:accumulated>&lt;tns2:missing>&lt;xsl:value-of select=&quot;sum($goalsWeeklyResultMapper/tns2:goalsWeekly/tns2:line[tns2:productId = $currentProductId]/tns2:creditSales/tns2:missing)&quot;/>&lt;/tns2:missing>&lt;/tns2:creditSales>&lt;tns2:countedSales>&lt;tns2:goal>&lt;xsl:value-of select=&quot;sum($goalsWeeklyResultMapper/tns2:goalsWeekly/tns2:line[tns2:productId = $currentProductId]/tns2:countedSales/tns2:goal)&quot;/>&lt;/tns2:goal>&lt;tns2:accumulated>&lt;xsl:value-of select=&quot;sum($goalsWeeklyResultMapper/tns2:goalsWeekly/tns2:line[tns2:productId = $currentProductId]/tns2:countedSales/tns2:accumulated)&quot;/>&lt;/tns2:accumulated>&lt;tns2:missing>&lt;xsl:value-of select=&quot;sum($goalsWeeklyResultMapper/tns2:goalsWeekly/tns2:line[tns2:productId = $currentProductId]/tns2:countedSales/tns2:missing)&quot;/>&lt;/tns2:missing>&lt;/tns2:countedSales>&lt;/tns2:line>&lt;/xsl:for-each>&lt;tns2:totalLine>&lt;tns2:totalSales>&lt;tns2:goal>&lt;xsl:value-of select=&quot;sum($goalsWeeklyResultMapper/tns2:goalsWeekly/tns2:totalLine/tns2:totalSales/tns2:goal)&quot;/>&lt;/tns2:goal>&lt;tns2:accumulated>&lt;xsl:value-of select=&quot;sum($goalsWeeklyResultMapper/tns2:goalsWeekly/tns2:totalLine/tns2:totalSales/tns2:accumulated)&quot;/>&lt;/tns2:accumulated>&lt;tns2:missing>&lt;xsl:value-of select=&quot;sum($goalsWeeklyResultMapper/tns2:goalsWeekly/tns2:totalLine/tns2:totalSales/tns2:missing)&quot;/>&lt;/tns2:missing>&lt;/tns2:totalSales>&lt;tns2:creditSales>&lt;tns2:goal>&lt;xsl:value-of select=&quot;sum($goalsWeeklyResultMapper/tns2:goalsWeekly/tns2:totalLine/tns2:creditSales/tns2:goal)&quot;/>&lt;/tns2:goal>&lt;tns2:accumulated>&lt;xsl:value-of select=&quot;sum($goalsWeeklyResultMapper/tns2:goalsWeekly/tns2:totalLine/tns2:creditSales/tns2:accumulated)&quot;/>&lt;/tns2:accumulated>&lt;tns2:missing>&lt;xsl:value-of select=&quot;sum($goalsWeeklyResultMapper/tns2:goalsWeekly/tns2:totalLine/tns2:creditSales/tns2:missing)&quot;/>&lt;/tns2:missing>&lt;/tns2:creditSales>&lt;tns2:countedSales>&lt;tns2:goal>&lt;xsl:value-of select=&quot;sum($goalsWeeklyResultMapper/tns2:goalsWeekly/tns2:totalLine/tns2:countedSales/tns2:goal)&quot;/>&lt;/tns2:goal>&lt;tns2:accumulated>&lt;xsl:value-of select=&quot;sum($goalsWeeklyResultMapper/tns2:goalsWeekly/tns2:totalLine/tns2:countedSales/tns2:accumulated)&quot;/>&lt;/tns2:accumulated>&lt;tns2:missing>&lt;xsl:value-of select=&quot;sum($goalsWeeklyResultMapper/tns2:goalsWeekly/tns2:totalLine/tns2:countedSales/tns2:missing)&quot;/>&lt;/tns2:missing>&lt;/tns2:countedSales>&lt;/tns2:totalLine>&lt;/tns2:totalGoals>&lt;tns2:catalogLines>&lt;xsl:variable name=&quot;productDescriptionArray&quot; select=&quot;tokenize($goalsWeeklyParse/tns6:arrayProduct/tns6:arrayProductDescription, &amp;quot;#&amp;quot;)&quot;/>&lt;xsl:for-each select=&quot;$productIdArray&quot;>&lt;xsl:variable name=&quot;position&quot; select=&quot;position()&quot;/>&lt;tns2:product>&lt;tns2:productId>&lt;xsl:value-of select=&quot;xsd:integer(current())&quot;/>&lt;/tns2:productId>&lt;xsl:if test=&quot;$productDescriptionArray[$position]&quot;>&lt;tns2:productDescription>&lt;xsl:value-of select=&quot;$productDescriptionArray[$position]&quot;/>&lt;/tns2:productDescription>&lt;/xsl:if>&lt;/tns2:product>&lt;/xsl:for-each>&lt;/tns2:catalogLines>&lt;/tns2:geographyGoals>&lt;/xsl:template>&lt;/xsl:stylesheet>" expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xslt1.0"/>
+                    </tibex:inputBindings>
+                    <tibex:config>
+                        <bwext:BWActivity
+                            activityTypeID="bw.generalactivities.mapper"
+                            version="6.0.0.001"
+                            xmlns:GoalsWeeklyResponseSchema="http://www.example.org/GoalsWeeklyResponseSchema"
+                            xmlns:activityconfig="http://tns.tibco.com/bw/model/activityconfig"
+                            xmlns:bwext="http://tns.tibco.com/bw/model/core/bwext"
+                            xmlns:generalactivities="http://ns.tibco.com/bw/palette/generalactivities" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                            <activityConfig>
+                                <properties name="config" xsi:type="activityconfig:EMFProperty">
+                                    <type href="http://ns.tibco.com/bw/palette/generalactivities#//Mapper"/>
+                                    <value
+                                    inputQName="GoalsWeeklyResponseSchema:geographyGoals" xsi:type="generalactivities:Mapper"/>
+                                </properties>
+                            </activityConfig>
+                        </bwext:BWActivity>
+                    </tibex:config>
+                </tibex:activityExtension>
+            </bpws:extensionActivity>
+            <bpws:empty name="noDataGoalsWeekly" tibex:xpdlId="c8431b45-3f3b-42b5-9bb5-0176ea4c1558">
+                <bpws:targets>
+                    <bpws:target linkName="goalsWeeklyInterfaceToEmpty"/>
+                </bpws:targets>
+                <bpws:sources>
+                    <bpws:source linkName="EmptyToend"/>
+                </bpws:sources>
+            </bpws:empty>
+        </bpws:flow>
+    </bpws:scope>
+</bpws:process>

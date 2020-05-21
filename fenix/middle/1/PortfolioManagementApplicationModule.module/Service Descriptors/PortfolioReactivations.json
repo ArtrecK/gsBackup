@@ -1,0 +1,197 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "API Reactivations",
+    "version": "1.0.0",
+    "title": "Reactivations",
+    "contact": {
+      "email": "mjgonzalez@elektra.com.mx"
+    }
+  },
+  "host": "10.54.36.89:8080",
+  "basePath": "/api/v1/portfolio",
+  "tags": [
+    {
+      "name": "reactivation",
+      "description": "Clientes a reactivar.",
+      "externalDocs": {
+        "description": "Descubre más de swagger",
+        "url": "http://swagger.io"
+      }
+    }
+  ],
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/reactivations/{sellerId}": {
+      "get": {
+        "tags": [
+          "reactivation"
+        ],
+        "summary": "Entrega la lista de clientes a reactivar.",
+        "description": "Búsqueda de clientes",
+        "operationId": "getCustomersList",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "sellerId",
+            "description": "Id de vendedor",
+            "type": "integer",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Consulta exitosa",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Reactivation"
+              }
+            },
+            "headers": {
+              "correlationId": {
+                "type": "string",
+                "description": "identificador de la transacción en capa de servicios."
+              }
+            }
+          },
+          "404": {
+            "description": "Ocurrió un error en la consulta",
+            "schema": {
+              "$ref": "#/definitions/errors"
+            },
+            "headers": {
+              "transactionId": {
+                "type": "string",
+                "description": "identificador de la transacción en capa de servicios."
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "api_key": {
+      "type": "apiKey",
+      "name": "api_key",
+      "in": "header"
+    }
+  },
+  "definitions": {
+    "Product": {
+      "type": "object",
+      "description": "Modelo articulo",
+      "properties": {
+        "sku": {
+          "type": "number",
+          "description": "SKU del producto"
+        },
+        "quantity": {
+          "type": "number",
+          "description": "Cantidad de articulos"
+        },
+        "description": {
+          "type": "string",
+          "description": "Descripción del articulo"
+        },
+        "price": {
+          "type": "number",
+          "description": "Precio Actual"
+        }
+      }
+    },
+    "Order": {
+      "type": "object",
+      "description": "Modelo de pedidos",
+      "properties": {
+        "orderNumber": {
+          "type": "integer",
+          "description": "Número identificador del pedido"
+        },
+        "amount": {
+          "type": "number",
+          "description": "Monto del pedido"
+        },
+        "dateLastPurchase": {
+          "type": "string",
+          "format": "date",
+          "description": "Fecha ultima compra"
+        },
+        "dateLiquidation": {
+          "type": "string",
+          "format": "date",
+          "description": "Fecha de liquidacion"
+        },
+        "products": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Product"
+          }
+        }
+      }
+    },
+    "Reactivation": {
+      "type": "object",
+      "description": "Contiene los clientes a reactivar",
+      "properties": {
+        "idPais": {
+          "type": "integer",
+          "description": "Identificador del país"
+        },
+        "idCanal": {
+          "type": "integer",
+          "description": "Identificador del canal"
+        },
+        "idSucursal": {
+          "type": "integer",
+          "description": "Identificador de sucursal"
+        },
+        "idFolio": {
+          "type": "integer",
+          "description": "Identificador de folio"
+        },
+        "orderBalance": {
+          "type": "number",
+          "description": "Saldo del pedido"
+        },
+        "dateLastPayment": {
+          "type": "string",
+          "format": "date",
+          "description": "Fecha del ultimo abono"
+        },
+        "orders": {
+          "type": "array",
+          "description": "Lista de pedidos",
+          "items": {
+            "$ref": "#/definitions/Order"
+          }
+        }
+      }
+    },
+    "error": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "description": "Código de error"
+        },
+        "message": {
+          "type": "string",
+          "description": "Mensaje del error o excepción"
+        }
+      }
+    },
+    "errors": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/error"
+      }
+    }
+  }
+}

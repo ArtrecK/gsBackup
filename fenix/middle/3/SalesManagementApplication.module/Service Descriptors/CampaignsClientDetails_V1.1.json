@@ -1,0 +1,356 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "Este servicio consulta las campañas y clientes del empleado por campañas, a partir de una lista de clientes asginados a la cartera del empleado",
+    "version": "1.0.0",
+    "title": "Service para consultar Campañas",
+    "contact": {
+      "email": "magarciap@elektra.com.mx"
+    }
+  },
+  "host": "10.54.36.89:8080",
+  "basePath": "/v1/portfolioweb",
+  "tags": [
+    {
+      "name": "clientsByCampaigns",
+      "description": "OBtiene clientes x Campañas activas y sus detalles"
+    },
+    {
+      "name": "Customer",
+      "description": "Information Customer"
+    }
+  ],
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/customer/Detail/ByCampaigns": {
+      "get": {
+        "tags": [
+          "clientsByCampaigns"
+        ],
+        "summary": "Detalle de clientes por campañas",
+        "description": "Regresa Json de Campañas y Detalle de clientes para mostrar en la pantalla de inicio",
+        "operationId": "getdetailbycampaigns",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "employeeNumber",
+            "in": "query",
+            "description": "Número de empleado",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "branch",
+            "in": "query",
+            "description": "Sucursal",
+            "required": true,
+            "type": "number"
+          },
+          {
+            "name": "country",
+            "in": "query",
+            "description": "Código del pais",
+            "required": true,
+            "type": "number"
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "description": "Tipo de consulta",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Consulta exitosa",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ClientByCampaigns"
+              }
+            },
+            "headers": {
+              "transactionId": {
+                "type": "string",
+                "description": "identificador de la transacción en capa de servicio."
+              }
+            }
+          },
+          "404": {
+            "description": "Ocurrió un error en la consulta",
+            "schema": {
+              "$ref": "#/definitions/errors"
+            },
+            "headers": {
+              "transactionId": {
+                "type": "string",
+                "description": "identificador de la transacción en capa de servicio."
+              }
+            }
+          }
+        }
+      }
+    },
+    "/customer/search": {
+      "get": {
+        "tags": [
+          "Customer"
+        ],
+        "summary": "Search Information Customer for Full Name",
+        "description": "Show Information relative of customers",
+        "operationId": "getCustomerSearch",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "fullName",
+            "in": "query",
+            "description": "Full Name",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "correlationId",
+            "in": "header",
+            "description": "Correlation Id",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Consulta exitosa",
+            "schema": {
+              "$ref": "#/definitions/Customers"
+            },
+            "headers": {
+              "transactionId": {
+                "type": "string",
+                "description": "identificador de la transacción en capa de servicio."
+              }
+            }
+          },
+          "404": {
+            "description": "Ocurrió un error en la consulta",
+            "schema": {
+              "$ref": "#/definitions/errors"
+            },
+            "headers": {
+              "transactionId": {
+                "type": "string",
+                "description": "identificador de la transacción en capa de servicio."
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "api_key": {
+      "type": "apiKey",
+      "name": "api_key",
+      "in": "header"
+    }
+  },
+  "definitions": {
+    "ClientByCampaigns": {
+      "type": "object",
+      "description": "Contiene el arreglo de las campañas y los clientes por campaña",
+      "properties": {
+        "campaigns": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Campaign"
+          }
+        },
+        "customersbycampaign": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CustomerData"
+          }
+        }
+      }
+    },
+    "Customers": {
+      "type": "object",
+      "description": "Contiene los datos basicos de un cliente",
+      "properties": {
+        "status": {
+          "type": "integer",
+          "description": "Information status for service"
+        },
+        "answer": {
+          "type": "array",
+          "description": "Information Customer",
+          "items": {
+            "$ref": "#/definitions/Answer"
+          }
+        },
+        "error": {
+          "$ref": "#/definitions/error"
+        }
+      }
+    },
+    "Answer": {
+      "type": "object",
+      "description": "Array with information of customers",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Primer Apellido del cliente"
+        },
+        "firstName": {
+          "type": "string",
+          "description": "Segundo Apellido del cliente"
+        },
+        "lastName": {
+          "type": "string",
+          "description": "Telefono de contacto del cliente"
+        },
+        "birthDate": {
+          "type": "string",
+          "description": "Telefono de contacto del cliente"
+        },
+        "uniqueCustomer": {
+          "$ref": "#/definitions/UniqueCustomer"
+        }
+      }
+    },
+    "UniqueCustomer": {
+      "type": "object",
+      "description": "Information Unique Customer",
+      "properties": {
+        "country": {
+          "type": "string",
+          "description": "Country"
+        },
+        "channel": {
+          "type": "string",
+          "description": "Channel"
+        },
+        "branch": {
+          "type": "string",
+          "description": "Branch"
+        },
+        "folio": {
+          "type": "string",
+          "description": "Folio"
+        }
+      }
+    },
+    "CustomerData": {
+      "type": "object",
+      "description": "Contiene los datos basicos de un cliente",
+      "properties": {
+        "uniquecustomerNumber": {
+          "type": "string",
+          "description": "Cliente unico, canal, pais"
+        },
+        "name": {
+          "type": "string",
+          "description": "Nombre completo del cliente"
+        },
+        "firstLastName": {
+          "type": "string",
+          "description": "Primer Apellido del cliente"
+        },
+        "secondLastName": {
+          "type": "string",
+          "description": "Segundo Apellido del cliente"
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "Telefono de contacto del cliente"
+        },
+        "email": {
+          "type": "string",
+          "description": "Correo electronico del cliente"
+        },
+        "address": {
+          "type": "string",
+          "description": "Direccion del cliente"
+        },
+        "photo": {
+          "type": "string",
+          "description": "Contiene la url de la foto"
+        },
+        "gender": {
+          "type": "string",
+          "description": "Contiene el genero del cliente"
+        },
+        "totalPaymentCapacity": {
+          "type": "number",
+          "format": "double",
+          "description": "capacidad de pago total"
+        },
+        "paymentCapacityAvailable": {
+          "type": "number",
+          "format": "double",
+          "description": "capacidad de pago disponible"
+        },
+        "credlinestatus": {
+          "type": "integer",
+          "format": "int32",
+          "description": "estatus de tabla cred linea de credito"
+        },
+        "cenlinestatus": {
+          "type": "integer",
+          "format": "int32",
+          "description": "estatus de tabla cen linea de credito"
+        },
+        "descriptionCreditLine": {
+          "type": "string",
+          "description": "descripciÃ³n del estatus de la linea de credito"
+        },
+        "nameCampaign": {
+          "type": "string",
+          "description": "Nombre de campaña"
+        },
+        "idCampaign": {
+          "type": "integer",
+          "description": "Id de Campaña"
+        }
+      }
+    },
+    "Campaign": {
+      "type": "object",
+      "description": "Contiene la informacion de confirmaciones de la base de datos",
+      "properties": {
+        "idCampana": {
+          "type": "number",
+          "description": "Id de Campaña"
+        },
+        "nomCampana": {
+          "type": "string",
+          "description": "Nombre de Campaña"
+        }
+      }
+    },
+    "error": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "description": "Código de error"
+        },
+        "message": {
+          "type": "string",
+          "description": "Mensaje del error o excepción"
+        }
+      }
+    },
+    "errors": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/error"
+      }
+    }
+  }
+}

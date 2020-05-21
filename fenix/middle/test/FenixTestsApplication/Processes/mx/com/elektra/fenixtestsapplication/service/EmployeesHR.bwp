@@ -1,0 +1,693 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpws:process exitOnStandardFault="no"
+    name="mx.com.elektra.fenixtestsapplication.service.EmployeesHR"
+    suppressJoinFailure="yes"
+    targetNamespace="http://xmlns.example.com/20181023165656"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:info="http://www.tibco.com/bw/process/info"
+    xmlns:ns="http://www.tibco.com/pe/EngineTypes"
+    xmlns:ns0="http://xmlns.example.com/20181023165656PLT"
+    xmlns:ns1="http://SistemasRH.com/DatosGenerales/"
+    xmlns:ns2="http://www.example.org/EmployeesHR"
+    xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
+    xmlns:sca-bpel="http://docs.oasis-open.org/ns/opencsa/sca-bpel/200801"
+    xmlns:tibex="http://www.tibco.com/bpel/2007/extensions"
+    xmlns:tibprop="http://ns.tibco.com/bw/property" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <tibex:Types>
+        <xs:schema attributeFormDefault="unqualified"
+            elementFormDefault="qualified"
+            targetNamespace="http://www.tibco.com/pe/EngineTypes"
+            xmlns:tns="http://www.tibco.com/pe/EngineTypes" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+            <xs:complexType block="extension restriction"
+                final="extension restriction" name="ErrorReport">
+                <xs:sequence>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" name="StackTrace" type="xs:string"/>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" name="Msg" type="xs:string"/>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" name="FullClass" type="xs:string"/>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" name="Class" type="xs:string"/>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" name="ProcessStack" type="xs:string"/>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" minOccurs="0" name="MsgCode" type="xs:string"/>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" minOccurs="0" name="Data" type="tns:anydata"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType block="extension restriction"
+                final="extension restriction" name="OptionalErrorReport">
+                <xs:sequence>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" minOccurs="0"
+                        name="StackTrace" type="xs:string"/>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" minOccurs="0" name="Msg" type="xs:string"/>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" minOccurs="0"
+                        name="FullClass" type="xs:string"/>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" minOccurs="0" name="Class" type="xs:string"/>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" minOccurs="0"
+                        name="ProcessStack" type="xs:string"/>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" minOccurs="0" name="MsgCode" type="xs:string"/>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" minOccurs="0" name="Data" type="tns:anydata"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType block="extension restriction"
+                final="extension restriction" name="FaultDetail">
+                <xs:sequence>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" name="ActivityName" type="xs:string"/>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" minOccurs="0" name="Data" type="tns:anydata"/>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" name="Msg" type="xs:string"/>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" name="MsgCode" type="xs:string"/>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" name="ProcessStack" type="xs:string"/>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" name="StackTrace" type="xs:string"/>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" name="FullClass" type="xs:string"/>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" name="Class" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType block="extension restriction"
+                final="extension restriction" name="ProcessContext">
+                <xs:sequence>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" name="JobId" type="xs:string"/>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" name="ApplicationName" type="xs:string"/>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" name="EngineName" type="xs:string"/>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" name="ProcessInstanceId" type="xs:string"/>
+                    <xs:element
+                        block="extension restriction substitution"
+                        form="unqualified" minOccurs="0"
+                        name="CustomJobId" type="xs:string"/>
+                    <!--xs:element name="RestartedFromCheckpoint" form="unqualified" block="extension restriction substitution" type="xs:boolean"/-->
+                    <!--xs:element minOccurs="0" maxOccurs="unbounded" name="TrackingInfo" form="unqualified" block="extension restriction substitution" type="xs:string"/-->
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType block="extension restriction"
+                final="extension restriction" name="anydata">
+                <xs:sequence>
+                    <xs:any namespace="##any" processContents="lax"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element block="extension restriction substitution"
+                final="extension restriction" name="OptionalErrorReport" type="tns:OptionalErrorReport"/>
+            <xs:element block="extension restriction substitution"
+                final="extension restriction" name="ErrorReport" type="tns:ErrorReport"/>
+            <xs:element block="extension restriction substitution"
+                final="extension restriction" name="FaultDetail" type="tns:FaultDetail"/>
+            <xs:element block="extension restriction substitution"
+                final="extension restriction" name="ProcessContext" type="tns:ProcessContext"/>
+            <xs:element block="extension restriction substitution"
+                final="extension restriction" name="CorrelationValue" type="xs:string"/>
+        </xs:schema>
+        <schema attributeFormDefault="unqualified"
+            elementFormDefault="unqualified"
+            targetNamespace="http://schemas.tibco.com/bw/pe/plugin/5.0/exceptions"
+            version="" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://schemas.tibco.com/bw/pe/plugin/5.0/exceptions">
+            <complexType name="ActivityExceptionType">
+                <sequence>
+                    <element name="msg" type="string"/>
+                    <element minOccurs="0" name="msgCode" type="string"/>
+                </sequence>
+            </complexType>
+            <element name="ActivityException" type="tns:ActivityExceptionType"/>
+            <complexType name="ActivityTimedOutExceptionType">
+                <complexContent>
+                    <extension base="tns:ActivityExceptionType"/>
+                </complexContent>
+            </complexType>
+            <element name="ActivityTimedOutException" type="tns:ActivityTimedOutExceptionType"/>
+        </schema>
+        <wsdl:definitions
+            targetNamespace="http://xmlns.example.com/20181023165656PLT"
+            xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
+            xmlns:ptyp="http://SistemasRH.com/DatosGenerales/"
+            xmlns:tns="http://xmlns.example.com/20181023165656PLT"
+            xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop"
+            xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <plnk:partnerLinkType name="partnerLinkType">
+                <plnk:role name="use" portType="ptyp:EmpleadoGeneralSoap"/>
+            </plnk:partnerLinkType>
+            <wsdl:import namespace="http://SistemasRH.com/DatosGenerales/"/>
+        </wsdl:definitions>
+    </tibex:Types>
+    <tibex:ProcessInfo callable="false" createdBy="adan"
+        createdOn="Tue Oct 23 16:56:56 CDT 2018" description=""
+        extraErrorVars="false" modifiers="public"
+        productVersion="6.4.1 HF1 V36 2017-09-26" scalable="true"
+        singleton="true" stateless="false" type="IT"/>
+    <tibex:ProcessInterface context="" input="" output=""/>
+    <tibex:ProcessTemplateConfigurations/>
+    <notation:Diagram measurementUnit="Pixel" type="BWProcess"
+        xmlns:bwnotation="http://tns.tibco.com/bw/runtime/BWNotation"
+        xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.2/notation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <children type="2001">
+            <children type="5001"/>
+            <children type="3001">
+                <styles xsi:type="notation:SortingStyle"/>
+                <styles xsi:type="notation:FilteringStyle"/>
+                <element href="//0/@process"/>
+            </children>
+            <children type="3002">
+                <styles xsi:type="notation:SortingStyle"/>
+                <styles xsi:type="notation:FilteringStyle"/>
+            </children>
+            <children type="3003">
+                <styles xsi:type="notation:SortingStyle"/>
+                <styles xsi:type="notation:FilteringStyle"/>
+            </children>
+            <children type="3004">
+                <children type="4018">
+                    <children type="3018">
+                        <children type="4020">
+                            <children type="3020">
+                                <children type="4005">
+                                    <children type="3007">
+                                    <children type="4010">
+                                    <children type="5002"/>
+                                    <children type="3010">
+                                    <children type="4013">
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <element href="//0/@process/@activity/@activity/@activities.0"/>
+                                    <layoutConstraint
+                                    height="34"
+                                    width="34" x="9"
+                                    xsi:type="notation:Bounds" y="55"/>
+                                    </children>
+                                    <styles xsi:type="notation:SortingStyle"/>
+                                    <styles xsi:type="notation:FilteringStyle"/>
+                                    </children>
+                                    <children type="3011">
+                                    <children type="4011">
+                                    <children type="3012">
+                                    <children type="4002">
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <styles
+                                    backgroundColor="16777215"
+                                    gradientEndColor="50431"
+                                    gradientStartColor="16777215" xsi:type="bwnotation:BackgroundStyle"/>
+                                    <element href="//0/@process/@activity/@activity/@activities.0/@messages.0/@activity/@activity/@activities.0"/>
+
+                                    <layoutConstraint
+                                    xsi:type="notation:Bounds" y="40"/>
+                                    </children>
+                                    <styles xsi:type="notation:SortingStyle"/>
+                                    <styles xsi:type="notation:FilteringStyle"/>
+                                    </children>
+                                    <children type="3013">
+                                    <children type="4018">
+                                    <children type="3018">
+
+                                    <children type="4020">
+
+                                    <children type="3020">
+
+                                    <children type="4005">
+
+                                    <children type="3007">
+
+                                    <children type="4002">
+
+                                    <children type="4017">
+
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+
+                                    <children type="4017">
+
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+
+                                    <children type="4017">
+
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+
+                                    <children type="4017">
+
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+
+                                    <styles
+                                    backgroundColor="16777215"
+                                    gradientEndColor="50431"
+                                    gradientStartColor="16777215" xsi:type="bwnotation:BackgroundStyle"/>
+
+                                    <element href="//0/@process/@activity/@activity/@activities.0/@messages.0/@activity/@activity/@activities.2"/>
+
+                                    <layoutConstraint
+                                    x="245"
+                                    xsi:type="notation:Bounds" y="10"/>
+                                    </children>
+
+                                    <children type="4002">
+
+                                    <children type="4017">
+
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+
+                                    <children type="4017">
+
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+
+                                    <children type="4017">
+
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+
+                                    <children type="4017">
+
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+
+                                    <styles
+                                    backgroundColor="16777215"
+                                    gradientEndColor="50431"
+                                    gradientStartColor="16777215" xsi:type="bwnotation:BackgroundStyle"/>
+
+                                    <element href="//0/@process/@activity/@activity/@activities.0/@messages.0/@activity/@activity/@activities.3"/>
+
+                                    <layoutConstraint
+                                    x="42"
+                                    xsi:type="notation:Bounds" y="10"/>
+                                    </children>
+
+                                    <styles xsi:type="notation:DrawerStyle"/>
+
+                                    <styles xsi:type="notation:SortingStyle"/>
+
+                                    <styles xsi:type="notation:FilteringStyle"/>
+                                    </children>
+
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+
+                                    <styles
+                                    backgroundColor="16777215"
+                                    gradientEndColor="50431"
+                                    gradientStartColor="16777215" xsi:type="bwnotation:BackgroundStyle"/>
+
+                                    <styles xsi:type="bwnotation:ResizingStyle"/>
+
+                                    <element href="//0/@process/@activity/@activity/@activities.0/@messages.0/@activity/@activity"/>
+
+                                    <layoutConstraint
+                                    height="99"
+                                    width="381" xsi:type="notation:Bounds"/>
+                                    </children>
+
+                                    <styles xsi:type="notation:SortingStyle"/>
+
+                                    <styles xsi:type="notation:FilteringStyle"/>
+                                    </children>
+
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+
+                                    <styles xsi:type="bwnotation:BackgroundStyle"/>
+
+                                    <styles xsi:type="bwnotation:ResizingStyle"/>
+
+                                    <element href="//0/@process/@activity/@activity/@activities.0/@messages.0/@activity"/>
+
+                                    <layoutConstraint
+                                    height="-45"
+                                    width="-76"
+                                    x="30"
+                                    xsi:type="notation:Bounds" y="20"/>
+                                    </children>
+                                    <styles xsi:type="notation:SortingStyle"/>
+                                    <styles xsi:type="notation:FilteringStyle"/>
+                                    </children>
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <styles xsi:type="bwnotation:BackgroundStyle"/>
+                                    <styles xsi:type="bwnotation:ResizingStyle"/>
+                                    <element href="//0/@process/@activity/@activity/@activities.0/@messages.0/@activity"/>
+
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <styles xsi:type="notation:SortingStyle"/>
+                                    <styles xsi:type="notation:FilteringStyle"/>
+                                    </children>
+                                    <children type="3016">
+                                    <children type="4002">
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <children type="4017">
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+
+                                    <layoutConstraint xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <styles
+                                    backgroundColor="16777215"
+                                    gradientEndColor="50431"
+                                    gradientStartColor="16777215" xsi:type="bwnotation:BackgroundStyle"/>
+                                    <element href="//0/@process/@activity/@activity/@activities.0/@messages.0/@activity/@activity/@activities.1"/>
+
+                                    <layoutConstraint
+                                    xsi:type="notation:Bounds" y="40"/>
+                                    </children>
+                                    <styles xsi:type="notation:SortingStyle"/>
+                                    <styles xsi:type="notation:FilteringStyle"/>
+                                    </children>
+                                    <styles
+                                    fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <styles xsi:type="bwnotation:BackgroundStyle"/>
+                                    <styles xsi:type="bwnotation:ResizingStyle"/>
+                                    <element href="//0/@process/@activity/@activity/@activities.0/@messages.0"/>
+                                    <layoutConstraint
+                                    height="140"
+                                    width="485" xsi:type="notation:Bounds"/>
+                                    </children>
+                                    <styles xsi:type="notation:SortingStyle"/>
+                                    <styles xsi:type="notation:FilteringStyle"/>
+                                    </children>
+                                    <styles fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <styles xsi:type="bwnotation:BackgroundStyle"/>
+                                    <styles xsi:type="bwnotation:ResizingStyle"/>
+                                    <element href="//0/@process/@activity/@activity/@activities.0"/>
+                                    <layoutConstraint
+                                    height="172" width="561"
+                                    x="113"
+                                    xsi:type="notation:Bounds" y="36"/>
+                                    </children>
+                                    <styles xsi:type="notation:DrawerStyle"/>
+                                    <styles xsi:type="notation:SortingStyle"/>
+                                    <styles xsi:type="notation:FilteringStyle"/>
+                                    <element href="//0/@process/@activity/@activity"/>
+                                    </children>
+                                    <styles fontName="Noto Sans"
+                                    lineColor="0" xsi:type="notation:ShapeStyle"/>
+                                    <styles backgroundColor="16777215"
+                                    gradientEndColor="50431"
+                                    gradientStartColor="16777215" xsi:type="bwnotation:BackgroundStyle"/>
+                                    <styles xsi:type="bwnotation:ResizingStyle"/>
+                                    <element href="//0/@process/@activity/@activity"/>
+                                    <layoutConstraint height="108"
+                                    width="400" x="2"
+                                    xsi:type="notation:Bounds" y="2"/>
+                                </children>
+                                <styles xsi:type="notation:SortingStyle"/>
+                                <styles xsi:type="notation:FilteringStyle"/>
+                            </children>
+                            <styles fontName="Noto Sans" lineColor="0" xsi:type="notation:ShapeStyle"/>
+                            <styles xsi:type="bwnotation:BackgroundStyle"/>
+                            <styles xsi:type="bwnotation:ResizingStyle"/>
+                            <element href="//0/@process/@activity"/>
+                            <layoutConstraint height="365" width="444"
+                                x="30" xsi:type="notation:Bounds" y="20"/>
+                        </children>
+                        <styles xsi:type="notation:SortingStyle"/>
+                        <styles xsi:type="notation:FilteringStyle"/>
+                        <element href="//0/@process/@activity"/>
+                    </children>
+                    <styles fontName="Noto Sans" lineColor="0" xsi:type="notation:ShapeStyle"/>
+                    <styles xsi:type="bwnotation:BackgroundStyle"/>
+                    <styles xsi:type="bwnotation:ResizingStyle"/>
+                    <element href="//0/@process/@activity"/>
+                    <layoutConstraint height="409" width="519" xsi:type="notation:Bounds"/>
+                </children>
+                <styles xsi:type="notation:SortingStyle"/>
+                <styles xsi:type="notation:FilteringStyle"/>
+                <element href="//0/@process"/>
+            </children>
+            <styles fontName="Noto Sans" lineColor="0" xsi:type="notation:ShapeStyle"/>
+            <element href="//0/@process"/>
+            <layoutConstraint height="460" width="860" xsi:type="notation:Bounds"/>
+        </children>
+        <styles xsi:type="notation:DiagramStyle"/>
+        <element href="//0"/>
+        <edges
+            source="//@children.0/@children.4/@children.0/@children.0/@children.0/@children.0/@children.0/@children.0/@children.0/@children.2/@children.0/@children.1/@children.0/@children.0/@children.0/@children.0/@children.0/@children.0/@children.1"
+            target="//@children.0/@children.4/@children.0/@children.0/@children.0/@children.0/@children.0/@children.0/@children.0/@children.2/@children.0/@children.1/@children.0/@children.0/@children.0/@children.0/@children.0/@children.0/@children.0" type="4006">
+            <children type="6002">
+                <layoutConstraint xsi:type="notation:Location" y="40"/>
+            </children>
+            <styles lineColor="0" xsi:type="notation:ConnectorStyle"/>
+            <styles fontName="Noto Sans" xsi:type="notation:FontStyle"/>
+            <element href="//0/@process/@activity/@activity/@activities.0/@messages.0/@activity/@activity/@links/@children.0"/>
+            <bendpoints points="[25, -6, -196, 0]$[197, 0, -24, 6]" xsi:type="notation:RelativeBendpoints"/>
+        </edges>
+    </notation:Diagram>
+    <bpws:import importType="http://schemas.xmlsoap.org/wsdl/"
+        location="../../../../../../Service%20Descriptors/ws_InterfasesRH/Linea/EmpleadoGeneral.asmx.wsdl" namespace="http://SistemasRH.com/DatosGenerales/"/>
+    <bpws:import importType="http://www.w3.org/2001/XMLSchema" namespace="http://www.example.org/EmployeesHR"/>
+    <bpws:partnerLinks>
+        <bpws:partnerLink myRole="use" name="EmpleadoGeneralSoap"
+            partnerLinkType="ns0:partnerLinkType"
+            sca-bpel:ignore="false" sca-bpel:service="EmpleadoGeneralSoap"/>
+    </bpws:partnerLinks>
+    <bpws:variables>
+        <bpws:variable element="ns:ProcessContext"
+            name="_processContext" sca-bpel:internal="true"/>
+        <bpws:variable messageType="ns1:getEmpleadoGeneralSoapIn"
+            name="getEmpleadoGeneral" sca-bpel:internal="true"/>
+        <bpws:variable messageType="ns1:getEmpleadoGeneralSoapOut"
+            name="getEmpleadoGeneralOut-input" sca-bpel:internal="true"/>
+        <bpws:variable element="ns2:EmployeeNumber"
+            name="InvokeEmployeeRH-input" sca-bpel:internal="true"/>
+        <bpws:variable element="ns2:EmpleadoResponse"
+            name="InvokeEmployeeRH" sca-bpel:internal="true"/>
+    </bpws:variables>
+    <bpws:extensions>
+        <bpws:extension mustUnderstand="no" namespace="http://www.eclipse.org/gmf/runtime/1.0.2/notation"/>
+        <bpws:extension mustUnderstand="no" namespace="http://www.tibco.com/bw/process/info"/>
+        <bpws:extension mustUnderstand="no" namespace="http://docs.oasis-open.org/ns/opencsa/sca-bpel/200801"/>
+        <bpws:extension mustUnderstand="no" namespace="http://docs.oasis-open.org/ns/opencsa/sca/200912"/>
+        <bpws:extension mustUnderstand="no" namespace="http://ns.tibco.com/bw/property"/>
+        <bpws:extension mustUnderstand="no" namespace="http://www.tibco.com/bpel/2007/extensions"/>
+    </bpws:extensions>
+    <bpws:scope name="scope">
+        <bpws:flow name="flow">
+            <bpws:links/>
+            <bpws:pick createInstance="yes" name="pick" tibex:xpdlId="d2851925-5847-4851-a8a6-af08d4a4ae45">
+                <bpws:onMessage operation="getEmpleadoGeneral"
+                    partnerLink="EmpleadoGeneralSoap"
+                    portType="ns1:EmpleadoGeneralSoap"
+                    tibex:xpdlId="1ed288a3-7767-4e75-b1aa-cc8321cb41f1" variable="getEmpleadoGeneral">
+                    <bpws:scope name="scope1">
+                        <bpws:flow name="flow1">
+                            <bpws:links>
+                                <bpws:link
+                                    name="InvokeEmployeeRHTogetEmpleadoGeneralOut" tibex:linkType="SUCCESS"/>
+                            </bpws:links>
+                            <bpws:empty name="OnMessageStart"
+                                tibex:constructor="onMessageStart" tibex:xpdlId="04692fd4-40f4-4eb2-ac45-cf57646bf3c8"/>
+                            <bpws:empty name="OnMessageEnd"
+                                tibex:constructor="onMessageEnd" tibex:xpdlId="663476ef-7e9d-488d-8a79-22bf8f3dbd02"/>
+                            <bpws:reply name="getEmpleadoGeneralOut"
+                                operation="getEmpleadoGeneral"
+                                partnerLink="EmpleadoGeneralSoap"
+                                portType="ns1:EmpleadoGeneralSoap"
+                                tibex:xpdlId="fdba138b-4d94-4e71-a58f-f3bc95abb94a" variable="getEmpleadoGeneralOut-input">
+                                <tibex:inputBinding expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xslt1.0">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:tns="http://SistemasRH.com/DatosGenerales/" xmlns:tns1="http://www.example.org/EmployeesHR" xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="2.0"&gt;&lt;xsl:param name="InvokeEmployeeRH"/&gt;&lt;xsl:template name="getEmpleadoGeneralOut-input" match="/"&gt;&lt;tns:getEmpleadoGeneralSoapOut&gt;&lt;parameters&gt;&lt;tns:getEmpleadoGeneralResponse&gt;&lt;tns:getEmpleadoGeneralResult&gt;&lt;tns:NumeroEmpleado&gt;&lt;xsl:value-of select="xsd:int($InvokeEmployeeRH/tns1:EmployeeNumber)"/&gt;&lt;/tns:NumeroEmpleado&gt;&lt;tns:NombreInicial&gt;&lt;xsl:value-of select="$InvokeEmployeeRH/tns1:Name"/&gt;&lt;/tns:NombreInicial&gt;&lt;tns:ApellidoPaterno&gt;&lt;xsl:value-of select="$InvokeEmployeeRH/tns1:FirstLastName"/&gt;&lt;/tns:ApellidoPaterno&gt;&lt;tns:ApellidoMaterno&gt;&lt;xsl:value-of select="$InvokeEmployeeRH/tns1:SecondLastName"/&gt;&lt;/tns:ApellidoMaterno&gt;&lt;tns:idCentroCostos&gt;&lt;xsl:value-of select="xsd:int($InvokeEmployeeRH/tns1:CECOnumber)"/&gt;&lt;/tns:idCentroCostos&gt;&lt;tns:Activo&gt;&lt;xsl:value-of select="true()"/&gt;&lt;/tns:Activo&gt;&lt;tns:idPuesto&gt;&lt;xsl:value-of select="0"/&gt;&lt;/tns:idPuesto&gt;&lt;tns:idFuncion&gt;&lt;xsl:value-of select="$InvokeEmployeeRH/tns1:SAPFunctionNumber"/&gt;&lt;/tns:idFuncion&gt;&lt;tns:DesFuncion&gt;&lt;xsl:value-of select="$InvokeEmployeeRH/tns1:SAPFunctionDescription"/&gt;&lt;/tns:DesFuncion&gt;&lt;tns:idDependencia&gt;&lt;xsl:value-of select="0"/&gt;&lt;/tns:idDependencia&gt;&lt;tns:idPuestoJefe&gt;&lt;xsl:value-of select="0"/&gt;&lt;/tns:idPuestoJefe&gt;&lt;tns:idNumeroEmpleadoJefe&gt;&lt;xsl:value-of select="xsd:int($InvokeEmployeeRH/tns1:BossNumber)"/&gt;&lt;/tns:idNumeroEmpleadoJefe&gt;&lt;tns:idPuestoRH&gt;&lt;xsl:value-of select="0"/&gt;&lt;/tns:idPuestoRH&gt;&lt;tns:idNumeroEmpleadoRH&gt;&lt;xsl:value-of select="0"/&gt;&lt;/tns:idNumeroEmpleadoRH&gt;&lt;tns:idSucursal&gt;&lt;xsl:value-of select="xsd:int($InvokeEmployeeRH/tns1:BranchOfficeNumber)"/&gt;&lt;/tns:idSucursal&gt;&lt;tns:DireccionEmpleado&gt;&lt;tns:Calle&gt;&lt;xsl:value-of select="''"/&gt;&lt;/tns:Calle&gt;&lt;/tns:DireccionEmpleado&gt;&lt;tns:SueldoEmpleado&gt;&lt;tns:SueldoSA&gt;&lt;xsl:value-of select="0"/&gt;&lt;/tns:SueldoSA&gt;&lt;tns:SueldoSC&gt;&lt;xsl:value-of select="0"/&gt;&lt;/tns:SueldoSC&gt;&lt;tns:SueldoSAPromedio&gt;&lt;xsl:value-of select="0"/&gt;&lt;/tns:SueldoSAPromedio&gt;&lt;tns:SueldoSCPromedio&gt;&lt;xsl:value-of select="0"/&gt;&lt;/tns:SueldoSCPromedio&gt;&lt;tns:SueldoVentaEmpleados&gt;&lt;xsl:value-of select="0"/&gt;&lt;/tns:SueldoVentaEmpleados&gt;&lt;tns:SueldoBruto&gt;&lt;xsl:value-of select="0"/&gt;&lt;/tns:SueldoBruto&gt;&lt;/tns:SueldoEmpleado&gt;&lt;tns:FechasEmpleado&gt;&lt;tns:FechaAntiguedad&gt;&lt;xsl:value-of select="231018"/&gt;&lt;/tns:FechaAntiguedad&gt;&lt;tns:FechaAltaTecnica&gt;&lt;xsl:value-of select="231018"/&gt;&lt;/tns:FechaAltaTecnica&gt;&lt;tns:FechaIngreso&gt;&lt;xsl:value-of select="231018"/&gt;&lt;/tns:FechaIngreso&gt;&lt;tns:FechaBaja&gt;&lt;xsl:value-of select="231018"/&gt;&lt;/tns:FechaBaja&gt;&lt;tns:FechaNacimiento&gt;&lt;xsl:value-of select="231018"/&gt;&lt;/tns:FechaNacimiento&gt;&lt;tns:FechaMovimiento&gt;&lt;xsl:value-of select="231018"/&gt;&lt;/tns:FechaMovimiento&gt;&lt;/tns:FechasEmpleado&gt;&lt;tns:AfiliacionEmpleado&gt;&lt;tns:RFC&gt;&lt;xsl:value-of select="''"/&gt;&lt;/tns:RFC&gt;&lt;/tns:AfiliacionEmpleado&gt;&lt;tns:DatosNomina&gt;&lt;tns:UnidadOrganizativa&gt;&lt;xsl:value-of select="0"/&gt;&lt;/tns:UnidadOrganizativa&gt;&lt;tns:UnidadOrganizativaPadre&gt;&lt;xsl:value-of select="0"/&gt;&lt;/tns:UnidadOrganizativaPadre&gt;&lt;tns:PagoSA&gt;&lt;xsl:value-of select="false()"/&gt;&lt;/tns:PagoSA&gt;&lt;tns:PagoSC&gt;&lt;xsl:value-of select="false()"/&gt;&lt;/tns:PagoSC&gt;&lt;/tns:DatosNomina&gt;&lt;/tns:getEmpleadoGeneralResult&gt;&lt;tns:ExisteError&gt;&lt;xsl:value-of select="false()"/&gt;&lt;/tns:ExisteError&gt;&lt;tns:Mensaje&gt;&lt;xsl:value-of select="&amp;quot;Sin Error&amp;quot;"/&gt;&lt;/tns:Mensaje&gt;&lt;/tns:getEmpleadoGeneralResponse&gt;&lt;/parameters&gt;&lt;/tns:getEmpleadoGeneralSoapOut&gt;&lt;/xsl:template&gt;&lt;/xsl:stylesheet&gt;</tibex:inputBinding>
+                                <tibex:inputBindings>
+                                    <tibex:partBinding
+                                    expression="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xa;&lt;xsl:stylesheet xmlns:xsl=&quot;http://www.w3.org/1999/XSL/Transform&quot; xmlns:tns=&quot;http://SistemasRH.com/DatosGenerales/&quot; xmlns:tns1=&quot;http://www.example.org/EmployeesHR&quot; xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot; version=&quot;2.0&quot;>&#xa;    &lt;xsl:param name=&quot;InvokeEmployeeRH&quot;/>&#xa;    &lt;xsl:template name=&quot;getEmpleadoGeneralOut-input&quot; match=&quot;/&quot;>&#xa;        &lt;tns:getEmpleadoGeneralResponse>&#xa;            &lt;tns:getEmpleadoGeneralResult>&#xa;                &lt;tns:NumeroEmpleado>&#xa;                    &lt;xsl:value-of select=&quot;xsd:int($InvokeEmployeeRH/tns1:EmployeeNumber)&quot;/>&#xa;                &lt;/tns:NumeroEmpleado>&#xa;                &lt;tns:NombreInicial>&#xa;                    &lt;xsl:value-of select=&quot;$InvokeEmployeeRH/tns1:Name&quot;/>&#xa;                &lt;/tns:NombreInicial>&#xa;                &lt;tns:ApellidoPaterno>&#xa;                    &lt;xsl:value-of select=&quot;$InvokeEmployeeRH/tns1:FirstLastName&quot;/>&#xa;                &lt;/tns:ApellidoPaterno>&#xa;                &lt;tns:ApellidoMaterno>&#xa;                    &lt;xsl:value-of select=&quot;$InvokeEmployeeRH/tns1:SecondLastName&quot;/>&#xa;                &lt;/tns:ApellidoMaterno>&#xa;                &lt;tns:idCentroCostos>&#xa;                    &lt;xsl:value-of select=&quot;xsd:int($InvokeEmployeeRH/tns1:CECOnumber)&quot;/>&#xa;                &lt;/tns:idCentroCostos>&#xa;                &lt;tns:Activo>&#xa;                    &lt;xsl:value-of select=&quot;true()&quot;/>&#xa;                &lt;/tns:Activo>&#xa;                &lt;tns:idPuesto>&#xa;                    &lt;xsl:value-of select=&quot;0&quot;/>&#xa;                &lt;/tns:idPuesto>&#xa;                &lt;tns:idFuncion>&#xa;                    &lt;xsl:value-of select=&quot;$InvokeEmployeeRH/tns1:SAPFunctionNumber&quot;/>&#xa;                &lt;/tns:idFuncion>&#xa;                &lt;tns:DesFuncion>&#xa;                    &lt;xsl:value-of select=&quot;$InvokeEmployeeRH/tns1:SAPFunctionDescription&quot;/>&#xa;                &lt;/tns:DesFuncion>&#xa;                &lt;tns:idDependencia>&#xa;                    &lt;xsl:value-of select=&quot;0&quot;/>&#xa;                &lt;/tns:idDependencia>&#xa;                &lt;tns:idPuestoJefe>&#xa;                    &lt;xsl:value-of select=&quot;0&quot;/>&#xa;                &lt;/tns:idPuestoJefe>&#xa;                &lt;tns:idNumeroEmpleadoJefe>&#xa;                    &lt;xsl:value-of select=&quot;xsd:int($InvokeEmployeeRH/tns1:BossNumber)&quot;/>&#xa;                &lt;/tns:idNumeroEmpleadoJefe>&#xa;                &lt;tns:idPuestoRH>&#xa;                    &lt;xsl:value-of select=&quot;0&quot;/>&#xa;                &lt;/tns:idPuestoRH>&#xa;                &lt;tns:idNumeroEmpleadoRH>&#xa;                    &lt;xsl:value-of select=&quot;0&quot;/>&#xa;                &lt;/tns:idNumeroEmpleadoRH>&#xa;                &lt;tns:idSucursal>&#xa;                    &lt;xsl:value-of select=&quot;xsd:int($InvokeEmployeeRH/tns1:BranchOfficeNumber)&quot;/>&#xa;                &lt;/tns:idSucursal>&#xa;                &lt;tns:DireccionEmpleado>&#xa;                    &lt;tns:Calle>&#xa;                        &lt;xsl:value-of select=&quot;''&quot;/>&#xa;                    &lt;/tns:Calle>&#xa;                &lt;/tns:DireccionEmpleado>&#xa;                &lt;tns:SueldoEmpleado>&#xa;                    &lt;tns:SueldoSA>&#xa;                        &lt;xsl:value-of select=&quot;0&quot;/>&#xa;                    &lt;/tns:SueldoSA>&#xa;                    &lt;tns:SueldoSC>&#xa;                        &lt;xsl:value-of select=&quot;0&quot;/>&#xa;                    &lt;/tns:SueldoSC>&#xa;                    &lt;tns:SueldoSAPromedio>&#xa;                        &lt;xsl:value-of select=&quot;0&quot;/>&#xa;                    &lt;/tns:SueldoSAPromedio>&#xa;                    &lt;tns:SueldoSCPromedio>&#xa;                        &lt;xsl:value-of select=&quot;0&quot;/>&#xa;                    &lt;/tns:SueldoSCPromedio>&#xa;                    &lt;tns:SueldoVentaEmpleados>&#xa;                        &lt;xsl:value-of select=&quot;0&quot;/>&#xa;                    &lt;/tns:SueldoVentaEmpleados>&#xa;                    &lt;tns:SueldoBruto>&#xa;                        &lt;xsl:value-of select=&quot;0&quot;/>&#xa;                    &lt;/tns:SueldoBruto>&#xa;                &lt;/tns:SueldoEmpleado>&#xa;                &lt;tns:FechasEmpleado>&#xa;                    &lt;tns:FechaAntiguedad>&#xa;                        &lt;xsl:value-of select=&quot;231018&quot;/>&#xa;                    &lt;/tns:FechaAntiguedad>&#xa;                    &lt;tns:FechaAltaTecnica>&#xa;                        &lt;xsl:value-of select=&quot;231018&quot;/>&#xa;                    &lt;/tns:FechaAltaTecnica>&#xa;                    &lt;tns:FechaIngreso>&#xa;                        &lt;xsl:value-of select=&quot;231018&quot;/>&#xa;                    &lt;/tns:FechaIngreso>&#xa;                    &lt;tns:FechaBaja>&#xa;                        &lt;xsl:value-of select=&quot;231018&quot;/>&#xa;                    &lt;/tns:FechaBaja>&#xa;                    &lt;tns:FechaNacimiento>&#xa;                        &lt;xsl:value-of select=&quot;231018&quot;/>&#xa;                    &lt;/tns:FechaNacimiento>&#xa;                    &lt;tns:FechaMovimiento>&#xa;                        &lt;xsl:value-of select=&quot;231018&quot;/>&#xa;                    &lt;/tns:FechaMovimiento>&#xa;                &lt;/tns:FechasEmpleado>&#xa;                &lt;tns:AfiliacionEmpleado>&#xa;                    &lt;tns:RFC>&#xa;                        &lt;xsl:value-of select=&quot;''&quot;/>&#xa;                    &lt;/tns:RFC>&#xa;                &lt;/tns:AfiliacionEmpleado>&#xa;                &lt;tns:DatosNomina>&#xa;                    &lt;tns:UnidadOrganizativa>&#xa;                        &lt;xsl:value-of select=&quot;0&quot;/>&#xa;                    &lt;/tns:UnidadOrganizativa>&#xa;                    &lt;tns:UnidadOrganizativaPadre>&#xa;                        &lt;xsl:value-of select=&quot;0&quot;/>&#xa;                    &lt;/tns:UnidadOrganizativaPadre>&#xa;                    &lt;tns:PagoSA>&#xa;                        &lt;xsl:value-of select=&quot;false()&quot;/>&#xa;                    &lt;/tns:PagoSA>&#xa;                    &lt;tns:PagoSC>&#xa;                        &lt;xsl:value-of select=&quot;false()&quot;/>&#xa;                    &lt;/tns:PagoSC>&#xa;                &lt;/tns:DatosNomina>&#xa;            &lt;/tns:getEmpleadoGeneralResult>&#xa;            &lt;tns:ExisteError>&#xa;                &lt;xsl:value-of select=&quot;false()&quot;/>&#xa;            &lt;/tns:ExisteError>&#xa;            &lt;tns:Mensaje>&#xa;                &lt;xsl:value-of select=&quot;&amp;quot;Sin Error&amp;quot;&quot;/>&#xa;            &lt;/tns:Mensaje>&#xa;        &lt;/tns:getEmpleadoGeneralResponse>&#xa;    &lt;/xsl:template>&#xa;&lt;/xsl:stylesheet>" expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xslt1.0"/>
+                                </tibex:inputBindings>
+                                <bpws:targets>
+                                    <bpws:target linkName="InvokeEmployeeRHTogetEmpleadoGeneralOut"/>
+                                </bpws:targets>
+                            </bpws:reply>
+                            <bpws:extensionActivity>
+                                <tibex:extActivity
+                                    expression="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xa;&lt;xsl:stylesheet xmlns:xsl=&quot;http://www.w3.org/1999/XSL/Transform&quot; xmlns:tns=&quot;http://SistemasRH.com/DatosGenerales/&quot; xmlns:tns1=&quot;http://www.example.org/EmployeesHR&quot; version=&quot;2.0&quot;>&lt;xsl:param name=&quot;getEmpleadoGeneral&quot;/>&lt;xsl:template name=&quot;InvokeEmployeeRH-input&quot; match=&quot;/&quot;>&lt;tns1:EmployeeNumber>&lt;xsl:value-of select=&quot;$getEmpleadoGeneral/parameters/tns:getEmpleadoGeneral/tns:Empleado&quot;/>&lt;/tns1:EmployeeNumber>&lt;/xsl:template>&lt;/xsl:stylesheet>"
+                                    expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xslt1.0"
+                                    inputVariable="InvokeEmployeeRH-input"
+                                    name="InvokeEmployeeRH"
+                                    outputVariable="InvokeEmployeeRH"
+                                    tibex:xpdlId="d0dec2eb-e37c-407f-b0f0-fff6b1dafbb6"
+                                    type="bw.generalactivities.callprocess" xmlns:tibex="http://www.tibco.com/bpel/2007/extensions">
+                                    <bpws:sources>
+                                    <bpws:source linkName="InvokeEmployeeRHTogetEmpleadoGeneralOut"/>
+                                    </bpws:sources>
+                                    <tibex:inputBindings>
+                                    <tibex:inputBinding
+                                    expression="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xa;&lt;xsl:stylesheet xmlns:xsl=&quot;http://www.w3.org/1999/XSL/Transform&quot; xmlns:tns=&quot;http://SistemasRH.com/DatosGenerales/&quot; xmlns:tns1=&quot;http://www.example.org/EmployeesHR&quot; version=&quot;2.0&quot;>&#xa;    &lt;xsl:param name=&quot;getEmpleadoGeneral.parameters&quot;/>&#xa;    &lt;xsl:template name=&quot;InvokeEmployeeRH-input&quot; match=&quot;/&quot;>&#xa;        &lt;tns1:EmployeeNumber>&#xa;            &lt;xsl:value-of select=&quot;$getEmpleadoGeneral.parameters/tns:Empleado&quot;/>&#xa;        &lt;/tns1:EmployeeNumber>&#xa;    &lt;/xsl:template>&#xa;&lt;/xsl:stylesheet>" expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xslt1.0"/>
+                                    </tibex:inputBindings>
+                                    <tibex:CallProcess
+                                    subProcessName="mx.com.elektra.fenixtestsapplication.subprocesses.employees.InvokeEmployeeRH" xmlns:tibex="http://www.tibco.com/bpel/2007/extensions"/>
+                                </tibex:extActivity>
+                            </bpws:extensionActivity>
+                        </bpws:flow>
+                    </bpws:scope>
+                </bpws:onMessage>
+            </bpws:pick>
+        </bpws:flow>
+    </bpws:scope>
+</bpws:process>

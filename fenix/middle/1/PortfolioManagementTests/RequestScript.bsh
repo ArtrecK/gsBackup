@@ -1,0 +1,30 @@
+import org.apache.commons.io.FileUtils;
+import org.apache.jmeter.services.FileServer;
+import org.apache.commons.lang3.StringUtils;
+try {
+	String baseDir=FileServer.getFileServer().getBaseDir();
+    String currentSampler=ctx.getCurrentSampler().getName();
+    log.info(currentSampler);
+    String defaultFilename = baseDir + File.separator + currentSampler + "_Sampler" + File.separator + currentSampler + ".request";
+    String customFilename = baseDir + File.separator + vars.get(currentSampler + "_jsonTemplate");
+    //log.info("filename:" +filename );
+    String content = null;
+    if (customFilename != null)
+        content = FileUtils.readFileToString(new File(customFilename));
+    else
+        content = FileUtils.readFileToString(new File(defaultFilename));
+    String [] fields=((String)vars.get(currentSampler + "_fields")).split(",");
+
+	for (String f:fields)
+	{
+		log.info(f);
+		log.info(vars.get(f));
+		content=StringUtils.replace(content,"${"+f+"}",vars.get(f));
+		//log.info(content);
+	}
+    	vars.put(currentSampler, content);
+    	//log.info("Contenido cargado");
+} catch (Throwable ex) {
+    log.info("Failed to read file", ex);
+    throw ex;
+}

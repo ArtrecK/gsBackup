@@ -1,0 +1,255 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "El servicio se encarga de obtener la información de ventas.",
+    "version": "0.0.1",
+    "title": "Sales API",
+    "termsOfService": "http://swagger.io/terms/",
+    "contact": {
+      "email": "cramirezc@elektra.com.mx"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "host": "10.54.36.89:8343",
+  "basePath": "/",
+  "tags": [
+    {
+      "name": "Sales Services",
+      "description": "Microservicio enfocado a las ventas"
+    }
+  ],
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/sales/goals/weekly/{employeeNumber}": {
+      "get": {
+        "tags": [
+          "Sales Services"
+        ],
+        "summary": "Find goals by employeeNumber",
+        "description": "Returns goals",
+        "operationId": "getWeekly",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "employeeNumber",
+            "in": "path",
+            "description": "employeeNumber for search goals",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "schema": {
+              "$ref": "#/definitions/lines"
+            }
+          },
+          "404": {
+            "description": "Invalid employeeNumber not found",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/sales/goals/daily/{employeeNumber}": {
+      "get": {
+        "tags": [
+          "Sales Services"
+        ],
+        "summary": "Find goals daily by employeeNumber",
+        "description": "Returns today goals",
+        "operationId": "getDaily",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "employeeNumber",
+            "in": "path",
+            "description": "employeeNumber for search goals for daily",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/lines"
+            }
+          },
+          "404": {
+            "description": "Invalid employeeNumber not found",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/sales/ranking/{employeeNumber}": {
+      "get": {
+        "tags": [
+          "Sales Services"
+        ],
+        "summary": "Find ranking by customer",
+        "description": "Returns ranking by customer",
+        "operationId": "getRanking",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "employeeNumber",
+            "in": "path",
+            "description": "ID of customer to return",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/ranking"
+            }
+          },
+          "404": {
+            "description": "Invalid employeeNumber not found",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "api_key": {
+      "type": "apiKey",
+      "name": "api_key",
+      "in": "header"
+    }
+  },
+  "definitions": {
+    "goalsObject": {
+      "type": "object",
+      "properties": {
+        "ticket_pro": {
+          "type": "number"
+        },
+        "total": {
+          "type": "number"
+        },
+        "credit": {
+          "type": "number"
+        },
+        "counted": {
+          "type": "number"
+        }
+      }
+    },
+    "line": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "total": {
+          "$ref": "#/definitions/goalsObject"
+        },
+        "accumulated": {
+          "$ref": "#/definitions/goalsObject"
+        },
+        "missing": {
+          "$ref": "#/definitions/goalsObject"
+        }
+      }
+    },
+    "goals": {
+      "type": "object",
+      "properties": {
+        "total": {
+          "$ref": "#/definitions/goalsObject"
+        },
+        "accumulated": {
+          "$ref": "#/definitions/goalsObject"
+        },
+        "missing": {
+          "$ref": "#/definitions/goalsObject"
+        }
+      }
+    },
+    "lines": {
+      "type": "object",
+      "properties": {
+        "total": {
+          "$ref": "#/definitions/goalsObject"
+        },
+        "accumulated": {
+          "$ref": "#/definitions/goalsObject"
+        },
+        "missing": {
+          "$ref": "#/definitions/goalsObject"
+        },
+        "line": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/line"
+          }
+        }
+      }
+    },
+    "ranking": {
+      "type": "object",
+      "properties": {
+        "seller": {
+          "type": "integer"
+        },
+        "region": {
+          "type": "integer"
+        },
+        "store": {
+          "type": "integer"
+        },
+        "country": {
+          "type": "integer"
+        }
+      }
+    },
+    "errorType": {
+      "type": "object",
+      "properties": {
+        "error_code": {
+          "type": "integer"
+        },
+        "message": {
+          "type": "integer"
+        },
+        "transactionId": {
+          "type": "string"
+        }
+      }
+    },
+    "error": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/errorType"
+      }
+    }
+  },
+  "externalDocs": {
+    "description": "Find out more about Swagger",
+    "url": "http://swagger.io"
+  }
+}

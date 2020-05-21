@@ -1,0 +1,394 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "El servicio se encarga de obtener la información de ventas.",
+    "version": "0.0.1",
+    "title": "Sales API",
+    "termsOfService": "http://swagger.io/terms/",
+    "contact": {
+      "email": "cramirezc@elektra.com.mx"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "host": "10.54.36.89:8343",
+  "basePath": "/",
+  "tags": [
+    {
+      "name": "Sales Services",
+      "description": "Microservicio enfocado a las ventas"
+    },
+    {
+      "name": "Credit Application",
+      "description": "Microservicio enfocado a las solicitudes pendientes de los clientes"
+    }
+  ],
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/sales/goals/weekly": {
+      "get": {
+        "tags": [
+          "Sales Services"
+        ],
+        "summary": "Find goals by employeeNumber",
+        "description": "Returns goals",
+        "operationId": "getWeekly",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "employeeNumber",
+            "in": "query",
+            "description": "employeeNumber for search goals",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "branchNumber",
+            "in": "query",
+            "description": "branchNumber for search goals",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "dateGoals",
+            "in": "query",
+            "description": "date for search goals",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "schema": {
+              "$ref": "#/definitions/lines"
+            }
+          },
+          "404": {
+            "description": "Invalid employeeNumber not found",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/sales/goals/daily": {
+      "get": {
+        "tags": [
+          "Sales Services"
+        ],
+        "summary": "Find goals daily by employeeNumber",
+        "description": "Returns today goals",
+        "operationId": "getDaily",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "employeeNumber",
+            "in": "query",
+            "description": "employeeNumber for search goals",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "branchNumber",
+            "in": "query",
+            "description": "branchNumber for search goals",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "dateGoals",
+            "in": "query",
+            "description": "date for search goals",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/lines"
+            },
+            "headers": {
+              "transactionId": {
+                "type": "string",
+                "description": "identificador de la transacción en capa de servicios."
+              }
+            }
+          },
+          "404": {
+            "description": "Invalid employeeNumber not found",
+            "schema": {
+              "$ref": "#/definitions/error"
+            },
+            "headers": {
+              "transactionId": {
+                "type": "string",
+                "description": "identificador de la transacción en capa de servicios."
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sales/ranking/{employeeNumber}": {
+      "get": {
+        "tags": [
+          "Sales Services"
+        ],
+        "summary": "Find ranking by customer",
+        "description": "Returns ranking by customer",
+        "operationId": "getRanking",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "employeeNumber",
+            "in": "path",
+            "description": "ID of customer to return",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/ranking"
+            }
+          },
+          "404": {
+            "description": "Invalid employeeNumber not found",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/credit/application": {
+      "get": {
+        "tags": [
+          "Credit Application"
+        ],
+        "summary": "Find ranking by customer",
+        "description": "Returns ranking by customer",
+        "operationId": "getCreditApplication",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "branchNumber",
+            "in": "query",
+            "description": "Número de la sucursal",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "employeeNumber",
+            "in": "query",
+            "description": "Número de Vendedor",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/application"
+            },
+            "headers": {
+              "transactionId": {
+                "type": "string",
+                "description": "identificador de la transacción en capa de servicios."
+              }
+            }
+          },
+          "404": {
+            "description": "Invalid application not found",
+            "schema": {
+              "$ref": "#/definitions/error"
+            },
+            "headers": {
+              "transactionId": {
+                "type": "string",
+                "description": "identificador de la transacción en capa de servicios."
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "api_key": {
+      "type": "apiKey",
+      "name": "api_key",
+      "in": "header"
+    }
+  },
+  "definitions": {
+    "goals": {
+      "type": "object",
+      "properties": {
+        "ticket_pro": {
+          "type": "number"
+        },
+        "total": {
+          "type": "number"
+        },
+        "credit": {
+          "type": "number"
+        },
+        "counted": {
+          "type": "number"
+        }
+      }
+    },
+    "docs": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "value": {
+          "type": "number"
+        }
+      }
+    },
+    "client": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "firtName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "uniqueCustomer": {
+          "type": "string"
+        },
+        "amount": {
+          "type": "number"
+        },
+        "docs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/docs"
+          }
+        }
+      }
+    },
+    "application": {
+      "type": "object",
+      "properties": {
+        "total": {
+          "type": "number"
+        },
+        "docs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/docs"
+          }
+        },
+        "clients": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/client"
+          }
+        }
+      }
+    },
+    "line": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "total": {
+          "$ref": "#/definitions/goals"
+        },
+        "accumulated": {
+          "$ref": "#/definitions/goals"
+        },
+        "missing": {
+          "$ref": "#/definitions/goals"
+        }
+      }
+    },
+    "lines": {
+      "type": "object",
+      "properties": {
+        "total": {
+          "$ref": "#/definitions/goals"
+        },
+        "accumulated": {
+          "$ref": "#/definitions/goals"
+        },
+        "missing": {
+          "$ref": "#/definitions/goals"
+        },
+        "line": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/line"
+          }
+        }
+      }
+    },
+    "ranking": {
+      "type": "object",
+      "properties": {
+        "seller": {
+          "type": "integer"
+        },
+        "region": {
+          "type": "integer"
+        },
+        "store": {
+          "type": "integer"
+        },
+        "country": {
+          "type": "integer"
+        }
+      }
+    },
+    "errorType": {
+      "type": "object",
+      "properties": {
+        "error_code": {
+          "type": "integer"
+        },
+        "message": {
+          "type": "integer"
+        }
+      }
+    },
+    "error": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/errorType"
+      }
+    }
+  },
+  "externalDocs": {
+    "description": "Find out more about Swagger",
+    "url": "http://swagger.io"
+  }
+}

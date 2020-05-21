@@ -1,0 +1,176 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "Este servicio consulta el numero de presupuestos del empleado, a partir de una lista de clientes asginados a la cartera del empleado. Por otro lado consulta el numero de pendientes por susrtir del empleado a partir de una lista de clientes asignados a la cartera del empleado. También, consulta las solicitudes y el detalle de sus documentos",
+    "version": "1.0.0",
+    "title": "Service para consultar pedidos, solicitudes y presupuestos",
+    "contact": {
+      "email": "yapale@elektra.com.mx"
+    }
+  },
+  "host": "localhost:8080",
+  "basePath": "/v1/portfolioweb",
+  "tags": [
+    {
+      "name": "purseOverview",
+      "description": "Servicios para mostrar detalle de cartera en overview"
+    }
+  ],
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/purse/overview/portfolioManagement": {
+      "get": {
+        "tags": [
+          "portfolioManagement"
+        ],
+        "summary": "Consulta número de clientes en cartera que aplican a una campaña y el detalle por campaña",
+        "description": "Regresa Json de numero de pedidos pendientes por surtir y detalle para mostrar en la pantalla de inicio",
+        "operationId": "getNumCustomersByCampaign",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "branchNumber",
+            "in": "query",
+            "description": "branchNumber parameter required",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "employeeNumber",
+            "in": "query",
+            "description": "employeeNumber parameter required",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "country",
+            "in": "query",
+            "description": "id pais",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "option",
+            "in": "query",
+            "description": "Número de opción que indica el módulo que está haciendo la llamada para este caso 1 es gestión de portafolio",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "operacion exitosa",
+            "schema": {
+              "$ref": "#/definitions/CustomersDetail"
+            },
+            "headers": {
+              "transactionId": {
+                "type": "string",
+                "description": "identificador de la transacción en capa de servicios"
+              }
+            }
+          },
+          "404": {
+            "description": "numero de presupuestos no encontrados",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            },
+            "headers": {
+              "transactionId": {
+                "type": "string",
+                "description": "identificador de la transacción en capa de servicios"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    }
+  },
+  "securityDefinitions": {
+    "api_key": {
+      "type": "apiKey",
+      "name": "api_key",
+      "in": "header"
+    }
+  },
+  "definitions": {
+    "inputData": {
+      "type": "object",
+      "properties": {
+        "branchNumber": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "employeeNumber": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "country": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "option": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "detail": {
+      "type": "object",
+      "properties": {
+        "number": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "CustomersDetail": {
+      "type": "object",
+      "properties": {
+        "customersNumber": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/detail"
+          }
+        }
+      }
+    },
+    "ErrorType": {
+      "type": "object",
+      "properties": {
+        "error_code": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "message": {
+          "type": "string"
+        },
+        "transactionID": {
+          "type": "string"
+        }
+      }
+    },
+    "Error": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/ErrorType"
+      }
+    }
+  }
+}

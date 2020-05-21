@@ -1,0 +1,252 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "API para portafolio web",
+    "version": "1.0.0",
+    "title": "Portfolio API",
+    "contact": {
+      "email": "yapale@elektra.com.mx"
+    }
+  },
+  "host": "10.54.36.89:8343",
+  "basePath": "/api/v1/portfolio",
+  "tags": [
+    {
+      "name": "customer",
+      "description": "Plantilla del Cliente para la aplicacion Web",
+      "externalDocs": {
+        "description": "Descubre mÃ¡s de swagger",
+        "url": "http://swagger.io"
+      }
+    }
+  ],
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/customerFile": {
+      "get": {
+        "tags": [
+          "customer"
+        ],
+        "summary": "Buscar por cliente único las promociones a las que pertenece el cliente y su top 10 de productos comprados",
+        "description": "Busqueda de la ficha del cliente",
+        "operationId": "getCustomerFile",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "country",
+            "in": "query",
+            "description": "País",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "channel",
+            "in": "query",
+            "description": "Canal",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "branchOffice",
+            "in": "query",
+            "description": "Sucursal",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "folio",
+            "in": "query",
+            "description": "Folio",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Consulta exitosa",
+            "schema": {
+              "$ref": "#/definitions/CustomerFile"
+            },
+            "headers": {
+              "transactionId": {
+                "type": "string",
+                "description": "identificador de la transaccion en capa de servicios."
+              }
+            }
+          },
+          "404": {
+            "description": "Ocurrio un error en la consulta",
+            "schema": {
+              "$ref": "#/definitions/errors"
+            },
+            "headers": {
+              "transactionId": {
+                "type": "string",
+                "description": "identificador de la transaccion en capa de servicios."
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "api_key": {
+      "type": "apiKey",
+      "name": "api_key",
+      "in": "header"
+    }
+  },
+  "definitions": {
+    "CustomerFile": {
+      "type": "object",
+      "properties": {
+        "offers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Offer"
+          }
+        },
+        "ProductHistory": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Product"
+          }
+        },
+        "RecommendedProducts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/NextBestOffer"
+          }
+        }
+      }
+    },
+    "Offers": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Offer"
+      }
+    },
+    "ProductHistory": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Product"
+      }
+    },
+    "RecommendedProducts": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/NextBestOffer"
+      }
+    },
+    "UniqueCustomer": {
+      "type": "object",
+      "description": "Contiene el cliente unico",
+      "properties": {
+        "country": {
+          "type": "integer",
+          "format": "int32",
+          "description": "pais"
+        },
+        "channel": {
+          "type": "integer",
+          "format": "int32",
+          "description": "Canal"
+        },
+        "branch": {
+          "type": "integer",
+          "format": "int32",
+          "description": "Numero de sucursal"
+        },
+        "folio": {
+          "type": "integer",
+          "format": "int32",
+          "description": "Folio"
+        }
+      }
+    },
+    "Offer": {
+      "type": "object",
+      "description": "Contiene los datos que describen la promoción a la cual está perfilada el cliente",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "id de la promocion"
+        },
+        "description": {
+          "type": "string",
+          "description": "Descripción de la promoción"
+        }
+      }
+    },
+    "NextBestOffer": {
+      "type": "object",
+      "description": "Contiene los productos que se recomendarán al cliente",
+      "properties": {
+        "productDescription": {
+          "type": "string",
+          "description": "Descripción de la promoción"
+        },
+        "statusOfInterest": {
+          "type": "string",
+          "description": "Define si el usuario está interesado por este "
+        },
+        "priority": {
+          "type": "string",
+          "description": "Prioridad para mostrar el producto 0 = no se sabe si está interesado, 1= no está interesado, 2= No muestra el producto"
+        }
+      }
+    },
+    "Product": {
+      "type": "object",
+      "description": "Contiene los datos de cada item del presupuesto",
+      "properties": {
+        "quantity": {
+          "type": "integer",
+          "format": "int64",
+          "description": "Numero de productos"
+        },
+        "SKUNumber": {
+          "type": "integer",
+          "format": "int64",
+          "description": "Identificador unico del producto"
+        },
+        "SKUDescription": {
+          "type": "string",
+          "description": "Descripcion del producto"
+        },
+        "SKULineId": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "SKULineDescription": {
+          "type": "string",
+          "description": "Describe la linea a la que pertenece el producto"
+        }
+      }
+    },
+    "error": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "description": "Codigo de error"
+        },
+        "message": {
+          "type": "string",
+          "description": "Mensaje del error o excepcion"
+        }
+      }
+    },
+    "errors": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/error"
+      }
+    }
+  }
+}

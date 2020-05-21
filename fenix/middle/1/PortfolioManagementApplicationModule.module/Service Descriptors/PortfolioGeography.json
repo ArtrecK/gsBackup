@@ -1,0 +1,317 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "API geografías",
+    "version": "1.0.0",
+    "title": "Geography",
+    "contact": {
+      "email": "ldrivera@elektra.com.mx"
+    }
+  },
+  "host": "10.54.36.89:8080",
+  "basePath": "/api/v1/portfolio",
+  "tags": [
+    {
+      "name": "geography",
+      "description": "Geografía de banco azteca y elektra.",
+      "externalDocs": {
+        "description": "Descubre más de swagger",
+        "url": "http://swagger.io"
+      }
+    }
+  ],
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/geography/countries": {
+      "get": {
+        "tags": [
+          "geography"
+        ],
+        "summary": "Entrega la lista de países disponibles de una geografía.",
+        "description": "Búsqueda de países",
+        "operationId": "getCountryList",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Consulta exitosa",
+            "schema": {
+              "example": [
+                {
+                  "id": 1,
+                  "name": "México"
+                },
+                {
+                  "id": 2,
+                  "name": "Perú"
+                },
+                {
+                  "id": 3,
+                  "name": "Guatemala"
+                }
+              ],
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/country"
+              }
+            },
+            "headers": {
+              "correlationId": {
+                "type": "string",
+                "description": "identificador de la transacción en capa de servicios."
+              }
+            }
+          },
+          "404": {
+            "description": "Ocurrió un error en la consulta",
+            "schema": {
+              "$ref": "#/definitions/errors"
+            },
+            "headers": {
+              "transactionId": {
+                "type": "string",
+                "description": "identificador de la transacción en capa de servicios."
+              }
+            }
+          }
+        }
+      }
+    },
+    "/geography/{businessUnit}/{countryId}": {
+      "get": {
+        "tags": [
+          "geography"
+        ],
+        "summary": "Consulta de la geografía completa de un país",
+        "description": "El servicio devolverá la geografía completa de un país, conectándose  a la base de datos del sistema de portafolios.",
+        "operationId": "getCountryGeography",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "countryId",
+            "description": "Número de país del cual se desea obtener su geografía",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "businessUnit",
+            "description": "Unidad de negocio de la que se desea consultar la geografía (BAZ o EKT)",
+            "required": true,
+            "type": "string",
+            "enum": [
+              "BAZ",
+              "EKT"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operacion Exitosa",
+            "schema": {
+              "$ref": "#/definitions/country"
+            },
+            "headers": {
+              "transactionId": {
+                "type": "string",
+                "description": "identificador de la transacción en capa de servicios."
+              }
+            }
+          },
+          "400": {
+            "description": "Esquema malformado",
+            "schema": {
+              "$ref": "#/definitions/errors"
+            },
+            "headers": {
+              "transactionId": {
+                "type": "string",
+                "description": "identificador de la transacción en capa de servicios."
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "api_key": {
+      "type": "apiKey",
+      "name": "api_key",
+      "in": "header"
+    }
+  },
+  "definitions": {
+    "branch": {
+      "type": "object",
+      "description": "Modelo de la sucursal",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Número identificador de la sucursal"
+        },
+        "name": {
+          "type": "string",
+          "description": "Nombre de la sucursal"
+        },
+        "type": {
+          "type": "string",
+          "description": "tipo de sucursal"
+        },
+        "channel": {
+          "type": "string",
+          "description": "Canal de la sucursal"
+        }
+      }
+    },
+    "region": {
+      "type": "object",
+      "description": "Describe una region",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Identificador de la region"
+        },
+        "name": {
+          "type": "string",
+          "description": "Nombre de la region"
+        },
+        "branches": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/branch"
+          }
+        }
+      }
+    },
+    "zone": {
+      "type": "object",
+      "description": "Describe una zona",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Identificador de la zona"
+        },
+        "name": {
+          "type": "string",
+          "description": "Nombre de la zona"
+        },
+        "regions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/region"
+          }
+        }
+      }
+    },
+    "territory": {
+      "type": "object",
+      "description": "Describe un territorio (Sólo aplica para geografías de banco azteca)",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Identificador del territorio"
+        },
+        "name": {
+          "type": "string",
+          "description": "Nombre del territorio"
+        },
+        "zones": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/zone"
+          }
+        }
+      }
+    },
+    "country": {
+      "type": "object",
+      "description": "Contiene los detalles del país",
+      "example": {
+        "name": "MEXICO",
+        "id": "1",
+        "territories": [
+          {
+            "name": "GEOGRAFIA CDT",
+            "id": "6372",
+            "zones": [
+              {
+                "regions": [
+                  {
+                    "name": "REGIONAL GUADALAJARA CDT",
+                    "id": "1736",
+                    "branches": [
+                      {
+                        "name": "DISTRIBUIDOR ITALIKA ARANDAS",
+                        "channel": "27",
+                        "id": "7596",
+                        "type": "TERCEROS"
+                      },
+                      {
+                        "name": "DISTRIBUIDOR ITALIKA GUADALAJARA",
+                        "channel": "27",
+                        "id": "8244",
+                        "type": "TERCEROS"
+                      }
+                    ]
+                  }
+                ],
+                "name": "ZONA OCCIDENTE BAJIO CDT",
+                "id": "775"
+              }
+            ]
+          }
+        ]
+      },
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Identificador del país"
+        },
+        "name": {
+          "type": "string",
+          "description": "Nombre del país"
+        },
+        "territories": {
+          "type": "array",
+          "description": "Lista de territorios (aplica para BAZ)",
+          "items": {
+            "$ref": "#/definitions/territory"
+          }
+        },
+        "zones": {
+          "type": "array",
+          "description": "Lista de regiones (aplica para EKT)",
+          "items": {
+            "$ref": "#/definitions/zone"
+          }
+        }
+      }
+    },
+    "error": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "description": "Código de error"
+        },
+        "message": {
+          "type": "string",
+          "description": "Mensaje del error o excepción"
+        }
+      }
+    },
+    "errors": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/error"
+      }
+    }
+  }
+}

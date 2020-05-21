@@ -1,0 +1,605 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "API para portafolio web",
+    "version": "1.0.0",
+    "title": "Portfolio API",
+    "contact": {
+      "email": "yapale@elektra.com.mx"
+    }
+  },
+  "host": "10.54.36.89:8343",
+  "basePath": "/api/v1/portfolio",
+  "tags": [
+    {
+      "name": "management",
+      "description": "Gestiones que realiza el cliente para aplicacion Web",
+      "externalDocs": {
+        "description": "Descubre mas de swagger",
+        "url": "http://swagger.io"
+      }
+    },
+    {
+      "name": "managementcatalogue",
+      "description": "catalogos que existen para las gestiones en la aplicacion Web",
+      "externalDocs": {
+        "description": "Descubre mas de swagger",
+        "url": "http://swagger.io"
+      }
+    }
+  ],
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/management": {
+      "get": {
+        "tags": [
+          "management"
+        ],
+        "summary": "Buscar las gestiones de un cliente por Employee, CU, resultado de la gestion.",
+        "description": "Búsqueda de alertas",
+        "operationId": "getmanagements",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "country",
+            "in": "query",
+            "description": "Número del pais",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "channel",
+            "in": "query",
+            "description": "Canal del cliente",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "branchoffice",
+            "in": "query",
+            "description": "Numero de la sucursal",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "folio",
+            "in": "query",
+            "description": "Folio del cliente",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Consulta exitosa",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Management"
+              }
+            },
+            "headers": {
+              "transactionId": {
+                "type": "string",
+                "description": "identificador de la transacción en capa de servicio."
+              }
+            }
+          },
+          "404": {
+            "description": "Ocurrió un error en la consulta",
+            "schema": {
+              "$ref": "#/definitions/errors"
+            },
+            "headers": {
+              "transactionId": {
+                "type": "string",
+                "description": "identificador de la transacción en capa de servicio."
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "management"
+        ],
+        "summary": "Crea las gestiones que realizo el cliente",
+        "description": "Crea las gestiones de los clientes",
+        "operationId": "getmanagement",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "management",
+            "in": "body",
+            "description": "Numero ID de la gestion",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ManagementId"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Consulta exitosa",
+            "schema": {
+              "$ref": "#/definitions/confirmation"
+            },
+            "headers": {
+              "transactionId": {
+                "type": "string",
+                "description": "identificador de la transaccion en capa de servicio."
+              }
+            }
+          },
+          "404": {
+            "description": "Ocurrio un error en la consulta",
+            "schema": {
+              "$ref": "#/definitions/errors"
+            },
+            "headers": {
+              "transactionId": {
+                "type": "string",
+                "description": "identificador de la transaccion en capa de servicio."
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "management"
+        ],
+        "summary": "Actualiza una nueva gestion",
+        "description": "El servicio actualizará las Gestiones elegidas por el usuario",
+        "operationId": "managementtUpdate",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "managementid",
+            "description": "Objeto gestion a actualizar",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ManagementId"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operacion Exitosa",
+            "schema": {
+              "$ref": "#/definitions/confirmation"
+            },
+            "headers": {
+              "transactionId": {
+                "type": "string",
+                "description": "identificador de la transacción en capa de servicios."
+              }
+            }
+          },
+          "400": {
+            "description": "Esquema malformado",
+            "schema": {
+              "$ref": "#/definitions/errors"
+            },
+            "headers": {
+              "transactionId": {
+                "type": "string",
+                "description": "identificador de la transacción en capa de servicios."
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "management"
+        ],
+        "summary": "Borra las gestiones,s olo se podra enviar el id de la gestion.",
+        "description": "El servicio borrará las gestiones del usuario mediante un borrado logico (cambio de status).",
+        "operationId": "managementDeletion",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "management",
+            "description": "Objeto gestion a eliminar",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ManagementId"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Borrado Exitoso",
+            "schema": {
+              "$ref": "#/definitions/confirmation"
+            },
+            "headers": {
+              "transactionId": {
+                "type": "string",
+                "description": "identificador de la transacción en capa de servicio."
+              }
+            }
+          },
+          "400": {
+            "description": "Esquema malformado",
+            "schema": {
+              "$ref": "#/definitions/errors"
+            },
+            "headers": {
+              "transactionId": {
+                "type": "string",
+                "description": "identificador de la transacción en capa de servicios."
+              }
+            }
+          }
+        }
+      }
+    },
+    "/management/catalogue": {
+      "get": {
+        "tags": [
+          "managementcatalogue"
+        ],
+        "summary": "Buscar los catalogos asignados para las gestiones gestiones.",
+        "description": "Búsqueda de catalogos gestiones",
+        "operationId": "getmanagementcatalogue",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "option",
+            "description": "Numero id que elige las opciones entre los catalogos.",
+            "required": false,
+            "type": "number"
+          },
+          {
+            "in": "query",
+            "name": "managementtype",
+            "description": "Numero id que identifica el catalogo del tipo de script.",
+            "required": false,
+            "type": "number"
+          },
+          {
+            "in": "query",
+            "name": "lineid",
+            "description": "Numero id que identifica la linea de las gestiones.",
+            "required": false,
+            "type": "number"
+          },
+          {
+            "in": "query",
+            "name": "periodid",
+            "description": "Numero id que identifica el periodo de las gestiones.",
+            "required": false,
+            "type": "number"
+          },
+          {
+            "in": "query",
+            "name": "promotionid",
+            "description": "Numero id que identifica la promocion de las gestiones.",
+            "required": false,
+            "type": "number"
+          },
+          {
+            "in": "query",
+            "name": "countryid",
+            "description": "Numero id que identifica el pais para las gestiones.",
+            "required": false,
+            "type": "number"
+          },
+          {
+            "in": "query",
+            "name": "territoryid",
+            "description": "Numero id que identifica el territorio del tipo de script.",
+            "required": false,
+            "type": "number"
+          },
+          {
+            "in": "query",
+            "name": "zoneid",
+            "description": "Numero id que identifica la zona de las gestiones del tipo.",
+            "required": false,
+            "type": "number"
+          },
+          {
+            "name": "arrayobjects",
+            "in": "query",
+            "description": "arrayobjects",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Consulta exitosa",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ManagementCatalogue"
+              }
+            },
+            "headers": {
+              "transactionId": {
+                "type": "string",
+                "description": "identificador de la transacción en capa de servicio."
+              }
+            }
+          },
+          "404": {
+            "description": "Ocurrió un error en la consulta",
+            "schema": {
+              "$ref": "#/definitions/errors"
+            },
+            "headers": {
+              "transactionId": {
+                "type": "string",
+                "description": "identificador de la transacción en capa de servicio."
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "api_key": {
+      "type": "apiKey",
+      "name": "api_key",
+      "in": "header"
+    }
+  },
+  "definitions": {
+    "ManagementId": {
+      "type": "object",
+      "description": "Contiene los datos de las gestiones",
+      "properties": {
+        "managementid": {
+          "type": "number",
+          "description": "Numero Id de la gestion"
+        },
+        "employee": {
+          "type": "string",
+          "description": "Numero del empleado"
+        },
+        "country": {
+          "type": "number",
+          "description": "Pais del cliente"
+        },
+        "channel": {
+          "type": "number",
+          "description": "canal del cliente"
+        },
+        "branchoffice": {
+          "type": "number",
+          "description": "sucursal del cliente"
+        },
+        "folio": {
+          "type": "number",
+          "description": "folio del cliente"
+        },
+        "countryEmployee": {
+          "type": "number",
+          "description": "Pais del Empleado"
+        },
+        "channelEmployee": {
+          "type": "number",
+          "description": "canal del Empleado"
+        },
+        "branchofficeEmployee": {
+          "type": "number",
+          "description": "sucursal del Empleado"
+        },
+        "campaignId": {
+          "type": "number",
+          "description": "Id de la campaña a gestionar"
+        },
+        "campaignName": {
+          "type": "string",
+          "description": "Nombre de la campaña a gestionar"
+        },
+        "resultgest": {
+          "type": "number",
+          "description": "Resultado de la gestion"
+        },
+        "managementtype": {
+          "type": "number",
+          "description": "Tipo de gestion"
+        },
+        "middlemanagement": {
+          "type": "number",
+          "description": "Medio de gestion"
+        },
+        "date": {
+          "type": "string",
+          "format": "date",
+          "description": "Fecha en que se realizo la gestion"
+        },
+        "description": {
+          "type": "string",
+          "description": "Notas acerca de la gestion que realizo el cliente"
+        },
+        "descGestionId": {
+          "type": "number",
+          "description": "ID tercer combo de gestion"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ManagementIdC"
+          }
+        }
+      }
+    },
+    "Management": {
+      "type": "object",
+      "description": "Contiene los datos de las gestiones",
+      "properties": {
+        "fdmanagement": {
+          "type": "string",
+          "description": "Fecha de la gestion del cliente"
+        },
+        "managementtype": {
+          "type": "string",
+          "description": "Tipo de gestion que realizo del cliente"
+        },
+        "managementDesc": {
+          "type": "string",
+          "description": "Descripción de la gestion que realizo del cliente"
+        },
+        "numberCustomer": {
+          "type": "string",
+          "description": "Numero del vendedor Gestionado"
+        },
+        "middlecontact": {
+          "type": "string",
+          "description": "Medio de contacto del cliente"
+        },
+        "result": {
+          "type": "string",
+          "description": "Resultado de la gestion del cliente"
+        },
+        "note": {
+          "type": "string",
+          "description": "Notas del cliente"
+        },
+        "event": {
+          "type": "string",
+          "description": "Evento por el que fue gestionado el cliente"
+        },
+        "fdevent": {
+          "type": "string",
+          "description": "Fecha del evento por el que fue gestionado el cliente"
+        },
+        "campaign": {
+          "$ref": "#/definitions/Campaign"
+        }
+      }
+    },
+    "ManagementIdC": {
+      "type": "object",
+      "description": "Contiene los datos de cada item de las gestiones",
+      "properties": {
+        "managementid": {
+          "type": "number",
+          "description": "Número Id de las gestion"
+        },
+        "quantity": {
+          "type": "string",
+          "description": "Número de gestiones"
+        },
+        "description": {
+          "type": "string",
+          "description": "Descripcion del resultado de gestion cliente"
+        }
+      }
+    },
+    "ManagementCatalogue": {
+      "type": "object",
+      "description": "Contiene la informacion de los diferentes catalogos",
+      "properties": {
+        "namearchivetype": {
+          "type": "string",
+          "description": "Nombre del archivo de la carta de cambaceo."
+        },
+        "lobimage": {
+          "type": "string",
+          "description": "carta de cambaceo."
+        },
+        "content": {
+          "type": "string",
+          "description": "Contenido del catalogo de script."
+        },
+        "middlemanagement": {
+          "type": "number",
+          "description": "Numero id que identifica el medio de la gestion."
+        },
+        "middlemanagementdesc": {
+          "type": "string",
+          "description": "Descripcion del id que identifica el medio de la gestion."
+        },
+        "managementresult": {
+          "type": "number",
+          "description": "Resultado de las gestiones."
+        },
+        "managementresultdesc": {
+          "type": "string",
+          "description": "Resultado de las gestiones con su descripcion."
+        }
+      }
+    },
+    "Campaign": {
+      "type": "object",
+      "description": "Contiene la infomación de la camapa que se gestionó",
+      "properties": {
+        "nomCampana": {
+          "type": "string",
+          "description": "Nombre de la campaña."
+        }
+      }
+    },
+    "confirmation": {
+      "type": "object",
+      "description": "Contiene la informacion de confirmaciones de la base de datos",
+      "properties": {
+        "code": {
+          "type": "number",
+          "description": "Codigo de confirmacion"
+        },
+        "message": {
+          "type": "string",
+          "description": "Mensaje de confirmacion"
+        },
+        "managementId": {
+          "type": "string",
+          "description": "Mensaje de confirmacion"
+        }
+      }
+    },
+    "error": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "description": "Código de error"
+        },
+        "message": {
+          "type": "string",
+          "description": "Mensaje del error o excepción"
+        }
+      }
+    },
+    "errors": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/error"
+      }
+    }
+  }
+}

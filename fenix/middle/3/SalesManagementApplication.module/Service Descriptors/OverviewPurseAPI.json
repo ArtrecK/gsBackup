@@ -1,0 +1,314 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "Este servicio consulta el numero de presupuestos del empleado, a partir de una lista de clientes asginados a la cartera del empleado. Por otro lado consulta el numero de pendientes por susrtir del empleado a partir de una lista de clientes asignados a la cartera del empleado. También, consulta las solicitudes y el detalle de sus documentos",
+    "version": "1.0.0",
+    "title": "Service para consultar pedidos, solicitudes y presupuestos",
+    "contact": {
+      "email": "arlopezp@elektra.com.mx"
+    }
+  },
+  "host": "localhost:8080",
+  "basePath": "/v1/portfolioweb",
+  "tags": [
+    {
+      "name": "purseOverview",
+      "description": "Servicios para mostrar detalle de cartera en overview"
+    }
+  ],
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/purse/overview/estimations": {
+      "get": {
+        "tags": [
+          "estimations"
+        ],
+        "summary": "Consultar numero de presupuestos del empleado y detalle",
+        "description": "Regresa Json de numero de presupuestos y detalle para mostrar en la pantalla de inicio",
+        "operationId": "getNumberEstimations",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "branchNumber",
+            "in": "query",
+            "description": "branchNumber parameter required",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "employeeNumber",
+            "in": "query",
+            "description": "employeeNumber parameter required",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "daysNumber",
+            "in": "query",
+            "description": "number days max",
+            "required": false,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "operacion exitosa",
+            "schema": {
+              "$ref": "#/definitions/estimations"
+            },
+            "headers": {
+              "transactionId": {
+                "type": "string",
+                "description": "identificador de la transacción en capa de servicios"
+              }
+            }
+          },
+          "404": {
+            "description": "numero de presupuestos no encontrados",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            },
+            "headers": {
+              "transactionId": {
+                "type": "string",
+                "description": "identificador de la transacción en capa de servicios"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    },
+    "/purse/overview/pendingOrdersSupply": {
+      "get": {
+        "tags": [
+          "pendingOrdersSupply"
+        ],
+        "summary": "Consultar numero de pedidos pendientes por surtir del empleado y detalle",
+        "description": "Regresa Json de numero de pedidos pendientes por surtir y detalle para mostrar en la pantalla de inicio",
+        "operationId": "getNumberOrders",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "branchNumber",
+            "in": "query",
+            "description": "branchNumber parameter required",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "employeeNumber",
+            "in": "query",
+            "description": "employeeNumber parameter required",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "operacion exitosa",
+            "schema": {
+              "$ref": "#/definitions/Orders"
+            },
+            "headers": {
+              "transactionId": {
+                "type": "string",
+                "description": "identificador de la transacción en capa de servicios"
+              }
+            }
+          },
+          "404": {
+            "description": "numero de presupuestos no encontrados",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            },
+            "headers": {
+              "transactionId": {
+                "type": "string",
+                "description": "identificador de la transacción en capa de servicios"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    },
+    "/purse/overview/pendingRequestSupply": {
+      "get": {
+        "tags": [
+          "pendingRequestSupply"
+        ],
+        "summary": "Consulta numero de solicitudes del empleado y detalle",
+        "description": "Regresa json con acumulado de solicitudes del empleado por línea de negocio",
+        "operationId": "getRequestsNumber",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "branchNumber",
+            "in": "query",
+            "description": "branchNumber parameter required",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "employeeNumber",
+            "in": "query",
+            "description": "employeeNumber parameter required",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "operacion exitosa",
+            "schema": {
+              "$ref": "#/definitions/pendingRequest"
+            },
+            "headers": {
+              "transactionId": {
+                "type": "string",
+                "description": "identificador de la transacción en capa de servicios"
+              }
+            }
+          },
+          "404": {
+            "description": "numero de presupuestos no encontrados",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            },
+            "headers": {
+              "transactionId": {
+                "type": "string",
+                "description": "identificador de la transacción en capa de servicios"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    }
+  },
+  "securityDefinitions": {
+    "api_key": {
+      "type": "apiKey",
+      "name": "api_key",
+      "in": "header"
+    }
+  },
+  "definitions": {
+    "detail": {
+      "type": "object",
+      "properties": {
+        "number": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "pendingRequest": {
+      "type": "object",
+      "properties": {
+        "requestsNumber": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/detail"
+          }
+        }
+      }
+    },
+    "Orders": {
+      "type": "object",
+      "properties": {
+        "ordersNumber": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/detail"
+          }
+        }
+      }
+    },
+    "estimations": {
+      "type": "object",
+      "properties": {
+        "estimationsNumber": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/detail"
+          }
+        }
+      }
+    },
+    "OrdersParams": {
+      "type": "object",
+      "description": "Contiene los datos de cada item del presupuesto",
+      "properties": {
+        "employeeNumber": {
+          "type": "integer",
+          "format": "int64",
+          "description": "Numero de Empleado"
+        },
+        "branchNumber": {
+          "type": "integer",
+          "format": "int64",
+          "description": "Numero de Sucursal"
+        }
+      }
+    },
+    "ErrorType": {
+      "type": "object",
+      "properties": {
+        "error_code": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "message": {
+          "type": "string"
+        },
+        "transactionID": {
+          "type": "string"
+        }
+      }
+    },
+    "Error": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/ErrorType"
+      }
+    }
+  }
+}

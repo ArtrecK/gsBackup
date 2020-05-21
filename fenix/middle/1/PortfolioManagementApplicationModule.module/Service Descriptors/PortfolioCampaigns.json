@@ -1,0 +1,234 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "API para gestión portafólio",
+    "version": "1.0.0",
+    "title": "Gestión Portfolio API",
+    "contact": {
+      "email": "magarciap@elektra.com.mx"
+    }
+  },
+  "host": "10.54.36.89:8343",
+  "basePath": "/api/v1/portfolio",
+  "tags": [
+    {
+      "name": "campaigns",
+      "description": "Campañas activas",
+      "externalDocs": {
+        "description": "Descubre mas de swagger",
+        "url": "http://swagger.io"
+      }
+    },
+    {
+      "name": "purseClients",
+      "description": "Consulta los clientes por campañas activas",
+      "externalDocs": {
+        "description": "Descubre mas de swagger",
+        "url": "http://swagger.io"
+      }
+    }
+  ],
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/campaigns": {
+      "get": {
+        "tags": [
+          "campaigns"
+        ],
+        "summary": "Buscar las campañas activas por Tipo y País.",
+        "description": "Búsqueda de Campañas",
+        "operationId": "getcampanas",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "country",
+            "in": "query",
+            "description": "Código del pais",
+            "required": true,
+            "type": "number"
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "description": "Tipo de consulta",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Consulta exitosa",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/campaign"
+              }
+            },
+            "headers": {
+              "transactionId": {
+                "type": "string",
+                "description": "identificador de la transacción en capa de servicio."
+              }
+            }
+          },
+          "404": {
+            "description": "Ocurrió un error en la consulta",
+            "schema": {
+              "$ref": "#/definitions/errors"
+            },
+            "headers": {
+              "transactionId": {
+                "type": "string",
+                "description": "identificador de la transacción en capa de servicio."
+              }
+            }
+          }
+        }
+      }
+    },
+    "/purse/management": {
+      "get": {
+        "tags": [
+          "purseClients"
+        ],
+        "summary": "Buscar los clientes de un empleado x campaña.",
+        "description": "Búsqueda de clientes por campaña",
+        "operationId": "getclientsxcampaigns",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "employeeNumber",
+            "in": "query",
+            "description": "Número de empleado",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "branch",
+            "in": "query",
+            "description": "Número de la sucursal",
+            "required": true,
+            "type": "number"
+          },
+          {
+            "name": "country",
+            "in": "query",
+            "description": "Pais",
+            "required": true,
+            "type": "number"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Consulta exitosa",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/customer"
+              }
+            },
+            "headers": {
+              "transactionId": {
+                "type": "string",
+                "description": "identificador de la transacción en capa de servicio."
+              }
+            }
+          },
+          "404": {
+            "description": "Ocurrió un error en la consulta",
+            "schema": {
+              "$ref": "#/definitions/errors"
+            },
+            "headers": {
+              "transactionId": {
+                "type": "string",
+                "description": "identificador de la transacción en capa de servicio."
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "api_key": {
+      "type": "apiKey",
+      "name": "api_key",
+      "in": "header"
+    }
+  },
+  "definitions": {
+    "customer": {
+      "type": "object",
+      "description": "Contiene la informacion de los diferentes catalogos",
+      "properties": {
+        "idCampana": {
+          "type": "number",
+          "description": "Codigo de confirmacion"
+        },
+        "nomCampana": {
+          "type": "string",
+          "description": "Mensaje de confirmacion"
+        },
+        "country": {
+          "type": "number",
+          "description": "Código de Pais"
+        },
+        "canal": {
+          "type": "number",
+          "description": "Canal"
+        },
+        "branch": {
+          "type": "number",
+          "description": "Sucursal"
+        },
+        "folio": {
+          "type": "number",
+          "description": "Folio"
+        }
+      }
+    },
+    "campaign": {
+      "type": "object",
+      "description": "Contiene la informacion de confirmaciones de la base de datos",
+      "properties": {
+        "idCampana": {
+          "type": "number",
+          "description": "Id de Campaña"
+        },
+        "nomCampana": {
+          "type": "string",
+          "description": "Nombre de Campaña"
+        }
+      }
+    },
+    "error": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "description": "Código de error"
+        },
+        "message": {
+          "type": "string",
+          "description": "Mensaje del error o excepción"
+        }
+      }
+    },
+    "errors": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/error"
+      }
+    }
+  }
+}

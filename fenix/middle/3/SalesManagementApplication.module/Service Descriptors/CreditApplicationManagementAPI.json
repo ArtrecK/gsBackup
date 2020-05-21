@@ -1,0 +1,365 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "This is a contract for customer services, contains pending supply, estimations, portfolio management and reactivations",
+    "version": "1.0.0",
+    "title": "Services for data customers",
+    "contact": {
+      "email": "arlopezp@elektra.com.mx"
+    }
+  },
+  "host": "localhost:8080",
+  "basePath": "/v1/portfolioweb",
+  "tags": [
+    {
+      "name": "Estimations",
+      "description": "Servicio para traer datos del cliente con sus presupuestos"
+    },
+    {
+      "name": "Applications",
+      "description": "Servicio para traer las solicitudes de los clientes"
+    }
+  ],
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/estimations": {
+      "get": {
+        "tags": [
+          "Estimations"
+        ],
+        "summary": "search by employee number, connect a customer360",
+        "description": "Returns a array of customers",
+        "operationId": "getCustomers",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "branchNumber",
+            "in": "query",
+            "description": "branchNumber parameter required",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "employeeNumber",
+            "in": "query",
+            "description": "branchNumber parameter required",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "daysNumber",
+            "in": "query",
+            "description": "number days max",
+            "required": false,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/Customers"
+            },
+            "headers": {
+              "transactionId": {
+                "type": "string",
+                "description": "identificador de la transacción en capa de servicios"
+              }
+            }
+          },
+          "404": {
+            "description": "Customers not founds",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            },
+            "headers": {
+              "transactionId": {
+                "type": "string",
+                "description": "identificador de la transacción en capa de servicios"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/applications": {
+      "get": {
+        "tags": [
+          "Applications"
+        ],
+        "summary": "search by employee number, connect a customer360",
+        "description": "Returns a array of applications",
+        "operationId": "getApplications",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "branchNumber",
+            "in": "query",
+            "description": "branchNumber parameter required",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "employeeNumber",
+            "in": "query",
+            "description": "branchNumber parameter required",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/Customers"
+            },
+            "headers": {
+              "transactionId": {
+                "type": "string",
+                "description": "identificador de la transacción en capa de servicios"
+              }
+            }
+          },
+          "404": {
+            "description": "Customers not founds",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            },
+            "headers": {
+              "transactionId": {
+                "type": "string",
+                "description": "identificador de la transacción en capa de servicios"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    }
+  },
+  "securityDefinitions": {
+    "api_key": {
+      "type": "apiKey",
+      "name": "api_key",
+      "in": "header"
+    }
+  },
+  "definitions": {
+    "CustomerData": {
+      "type": "object",
+      "properties": {
+        "uniquecustomerNumber": {
+          "$ref": "#/definitions/UniqueCustomer"
+        },
+        "name": {
+          "type": "string",
+          "description": "nombre del cliente"
+        },
+        "firstLastName": {
+          "type": "string",
+          "description": "apellido paterno del cliente"
+        },
+        "secondLastName": {
+          "type": "string",
+          "description": "apellido materno del cliente"
+        },
+        "email": {
+          "type": "string",
+          "description": "correo del cliente"
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "numero de telefono del cliente"
+        },
+        "address": {
+          "type": "string",
+          "description": "direccion del cliente"
+        },
+        "totalPaymentCapacity": {
+          "type": "number",
+          "format": "double",
+          "description": "capacidad de pago total"
+        },
+        "paymentCapacityAvailable": {
+          "type": "number",
+          "format": "double",
+          "description": "capacidad de pago disponible"
+        },
+        "credlinestatus": {
+          "type": "integer",
+          "format": "int32",
+          "description": "estatus de tabla cred linea de credito"
+        },
+        "cenlinestatus": {
+          "type": "integer",
+          "format": "int32",
+          "description": "estatus de tabla cen linea de credito"
+        },
+        "descriptionCreditLine": {
+          "type": "string",
+          "description": "Descripcion de la linea de credito"
+        },
+        "photo": {
+          "type": "string",
+          "description": "url de la foto del cliente"
+        },
+        "gender": {
+          "type": "string",
+          "description": "sexo del cliente"
+        },
+        "mount": {
+          "type": "number",
+          "description": "Monto de la solicitud"
+        },
+        "comment": {
+          "type": "string",
+          "description": "Comentario sobre la solicitud"
+        },
+        "application": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Application"
+          }
+        }
+      }
+    },
+    "Customers": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Customer"
+      }
+    },
+    "Application": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Nombre del documento"
+        },
+        "value": {
+          "type": "integer",
+          "description": "Estatus del documento"
+        }
+      }
+    },
+    "UniqueCustomer": {
+      "type": "object",
+      "properties": {
+        "country": {
+          "type": "number",
+          "description": "Pais"
+        },
+        "channel": {
+          "type": "number",
+          "description": "Canal"
+        },
+        "branch": {
+          "type": "number",
+          "description": "Sucursal"
+        },
+        "folio": {
+          "type": "number",
+          "description": "Folio"
+        }
+      }
+    },
+    "Estimation": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "numero de presupuesto"
+        },
+        "amount": {
+          "type": "number",
+          "format": "double",
+          "example": "300.60",
+          "description": "monto del presupuesto"
+        },
+        "calculationDate": {
+          "type": "string",
+          "format": "date"
+        },
+        "term": {
+          "type": "string",
+          "format": "date"
+        },
+        "payment": {
+          "type": "number",
+          "format": "double"
+        },
+        "products": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Product"
+          }
+        }
+      }
+    },
+    "Customer": {
+      "type": "object",
+      "properties": {
+        "customerData": {
+          "$ref": "#/definitions/CustomerData"
+        },
+        "estimations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Estimation"
+          }
+        }
+      }
+    },
+    "Product": {
+      "type": "object",
+      "properties": {
+        "SKUNumber": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "SKUDescription": {
+          "type": "string"
+        },
+        "quantity": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "SKULineId": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "SKULineDescription": {
+          "type": "string"
+        }
+      }
+    },
+    "ErrorType": {
+      "type": "object",
+      "properties": {
+        "error_code": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "Error": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/ErrorType"
+      }
+    }
+  }
+}

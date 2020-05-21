@@ -1,0 +1,127 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "Este servicio permite realizar la consulta de las tiendas que verán el módulo consultado.",
+    "version": "1.0.0",
+    "title": "Service para consultar tiendas que verán el módulo consultado",
+    "contact": {
+      "email": "yapale@elektra.com.mx"
+    }
+  },
+  "host": "localhost:8080",
+  "basePath": "/v1/portfolioweb",
+  "tags": [
+    {
+      "name": "parameters",
+      "description": "Servicio que permite realizar la consulta de las tiendas, que vará módulos nuevos, por parametro"
+    }
+  ],
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/parameterization/front/modules": {
+      "get": {
+        "tags": [
+          "getParameterValue"
+        ],
+        "summary": "Consulta las sucursales para las que se prenderán un determinado módulo",
+        "description": "Regresa Json conformado por el número de sucursales que visualizará un módulo en especifico",
+        "operationId": "getParameters",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "moduleName",
+            "in": "query",
+            "description": "nombre del parametro del que se consultará su valor",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "operacion exitosa",
+            "schema": {
+              "$ref": "#/definitions/Parameter"
+            },
+            "headers": {
+              "transactionId": {
+                "type": "string",
+                "description": "identificador de la transacción en capa de servicios"
+              }
+            }
+          },
+          "404": {
+            "description": "numero de presupuestos no encontrados",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            },
+            "headers": {
+              "transactionId": {
+                "type": "string",
+                "description": "identificador de la transacción en capa de servicios"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    }
+  },
+  "securityDefinitions": {
+    "api_key": {
+      "type": "apiKey",
+      "name": "api_key",
+      "in": "header"
+    }
+  },
+  "definitions": {
+    "Parameter": {
+      "type": "object",
+      "description": "Contiene el conteo de alertas vistas por empleado",
+      "properties": {
+        "value": {
+          "type": "string",
+          "description": "Contiene el valor del parametro que se está consultando"
+        }
+      }
+    },
+    "ParametrosConsultaParams": {
+      "type": "object",
+      "description": "Parametros que recibe sp",
+      "properties": {
+        "moduleName": {
+          "type": "string",
+          "description": "Contiene el valor del parametro que se está consultando"
+        }
+      }
+    },
+    "ErrorType": {
+      "type": "object",
+      "properties": {
+        "error_code": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "message": {
+          "type": "string"
+        },
+        "transactionID": {
+          "type": "string"
+        }
+      }
+    },
+    "Error": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/ErrorType"
+      }
+    }
+  }
+}

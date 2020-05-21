@@ -1,0 +1,128 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "API scheduled",
+    "version": "1.0.0",
+    "title": "Scheduled",
+    "contact": {
+      "email": "mjgonzalez@elektra.com.mx"
+    }
+  },
+  "host": "10.54.36.89:8080",
+  "tags": [
+    {
+      "name": "Agendados",
+      "description": "Agendados de gestion.",
+      "externalDocs": {
+        "description": "Reporte del numero de agendados",
+        "url": "http://swagger.io"
+      }
+    }
+  ],
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/seller/scheduled": {
+      "get": {
+        "tags": [
+          "Agendados"
+        ],
+        "summary": "Entrega la lista de clientes agendados por empleado con totales (llamada, visita, chambaceo).",
+        "description": "Lista de ctes agendados por empleado",
+        "operationId": "getCustomersScheduled",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "branchId",
+            "in": "query",
+            "description": "Id de sucursal",
+            "type": "integer",
+            "required": true
+          },
+          {
+            "name": "sellerId",
+            "in": "query",
+            "description": "Id del vendedor",
+            "type": "integer",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Consulta exitosa",
+            "schema": {
+              "$ref": "#/definitions/Schedules"
+            },
+            "headers": {
+              "correlationId": {
+                "type": "string",
+                "description": "identificador de la transacción en capa de servicios."
+              }
+            }
+          },
+          "404": {
+            "description": "Ocurrió un error en la consulta",
+            "schema": {
+              "$ref": "#/definitions/errors"
+            },
+            "headers": {
+              "transactionId": {
+                "type": "string",
+                "description": "identificador de la transacción en capa de servicios."
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "api_key": {
+      "type": "apiKey",
+      "name": "api_key",
+      "in": "header"
+    }
+  },
+  "definitions": {
+    "Schedules": {
+      "type": "object",
+      "description": "Contiene los agendados por el vendedor",
+      "properties": {
+        "calls": {
+          "type": "integer",
+          "description": "Numero de llamadas"
+        },
+        "visits": {
+          "type": "integer",
+          "description": "Numero de visitas"
+        },
+        "cambaceo": {
+          "type": "integer",
+          "description": "Numero de cambaceo"
+        }
+      }
+    },
+    "Error": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "description": "Código de error"
+        },
+        "message": {
+          "type": "string",
+          "description": "Mensaje del error o excepción"
+        }
+      }
+    },
+    "errors": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Error"
+      }
+    }
+  }
+}

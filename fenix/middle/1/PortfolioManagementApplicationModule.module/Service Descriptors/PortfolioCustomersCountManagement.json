@@ -1,0 +1,139 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "API para portafolio web",
+    "version": "1.0.0",
+    "title": "Portfolio API",
+    "contact": {
+      "email": "yapale@elektra.com.mx"
+    }
+  },
+  "host": "10.54.36.89:8343",
+  "basePath": "/api/v1/portfolio",
+  "tags": [
+    {
+      "name": "employee",
+      "description": "Numero de clientes para un empleado",
+      "externalDocs": {
+        "description": "Descubre mas de swagger",
+        "url": "http://swagger.io"
+      }
+    }
+  ],
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/portfolio/customers/count": {
+      "get": {
+        "tags": [
+          "employee"
+        ],
+        "summary": "Buscar número de clientes que tiene asignado un empleado en su portafolio",
+        "description": "Busqueda de número de clientes por empleado y sucursal",
+        "operationId": "getNumberOfCustomers",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "employeeNumber",
+            "in": "query",
+            "description": "Número de Empleado",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "branchOffice",
+            "in": "query",
+            "description": "Número de sucursal",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Consulta exitosa",
+            "schema": {
+              "$ref": "#/definitions/PortfolioCustomer"
+            },
+            "headers": {
+              "transactionId": {
+                "type": "string",
+                "description": "identificador de la transaccion en capa de servicios."
+              }
+            }
+          },
+          "404": {
+            "description": "Ocurrio un error en la consulta",
+            "schema": {
+              "$ref": "#/definitions/errors"
+            },
+            "headers": {
+              "transactionId": {
+                "type": "string",
+                "description": "identificador de la transaccion en capa de servicios."
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "api_key": {
+      "type": "apiKey",
+      "name": "api_key",
+      "in": "header"
+    }
+  },
+  "definitions": {
+    "PortfolioCustomer": {
+      "type": "object",
+      "properties": {
+        "releasedClients": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "blockedClients": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "totalOfClients": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "EmployeeNumber": {
+      "type": "object",
+      "properties": {
+        "employeeNumber": {
+          "type": "string"
+        },
+        "branchOffice": {
+          "type": "string"
+        }
+      }
+    },
+    "error": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "description": "Codigo de error"
+        },
+        "message": {
+          "type": "string",
+          "description": "Mensaje del error o excepcion"
+        }
+      }
+    },
+    "errors": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/error"
+      }
+    }
+  }
+}
