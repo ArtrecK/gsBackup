@@ -1,0 +1,6 @@
+--------------------------------------------------------
+--  DDL for Sequence SEQGEOALERTA
+--------------------------------------------------------
+
+   CREATE SEQUENCE  "SCSISGES"."SEQGEOALERTA"  MINVALUE 1 MAXVALUE 999999999999999999999 INCREMENT BY 1 START WITH 1749674 CACHE 20 ORDER  NOCYCLE;
+  GRANT SELECT ON "SCSISGES"."SEQGEOALERTA" TO "USRINFSISGES";

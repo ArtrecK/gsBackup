@@ -1,0 +1,6 @@
+--------------------------------------------------------
+--  DDL for Sequence SEQTIDELEFONO
+--------------------------------------------------------
+
+   CREATE SEQUENCE  "SCSISGES"."SEQTIDELEFONO"  MINVALUE 1 MAXVALUE 999999999999999999999 INCREMENT BY 1 START WITH 9386 CACHE 20 ORDER  NOCYCLE;
+  GRANT SELECT ON "SCSISGES"."SEQTIDELEFONO" TO "USRINFFENIX";

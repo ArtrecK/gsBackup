@@ -1,0 +1,206 @@
+--------------------------------------------------------
+--  DDL for Package PAACTUALIZADOR
+--------------------------------------------------------
+
+  CREATE OR REPLACE EDITIONABLE PACKAGE "SCACTUALIZADORVT"."PAACTUALIZADOR" 
+AS
+   /*************************************************************************************************************
+   Proyecto:              GESTION DE CLIENTES
+   Proposito:             Recibir informaci�n de Coordinador de Transacciones / BUS Inf. TIBCO
+   Parametros de entrada: --
+   Par�metros de salida:  --
+   Valores de retorno:    --
+   Llamado por:           Jobs por rango.
+   Creador:               Carolina P�rez Vite
+   Fecha de Creaci�n:     Mayo 2018
+   Precondiciones:        Modelo de base de datos necesario.
+   *************************************************************************************************************/
+
+   PROCEDURE SPESTATUSSUCURSAL (
+      pa_Pais         IN            SCACTUALIZADORVT.TATRNCRCB.FIPAISID%TYPE,
+      pa_Canal        IN            SCACTUALIZADORVT.TATRNCRCB.FICANAL%TYPE,
+      pa_Sucursal     IN            SCACTUALIZADORVT.TATRNCRCB.FISUCURSAL%TYPE,
+      pa_TransNum     IN            SCACTUALIZADORVT.TATRNCRCB.FITRANNO%TYPE,
+      pa_EstSuc       IN OUT        SCACTUALIZADORVT.TACTRLSUC.FISTATADN%TYPE,
+      pa_UltProc      IN OUT        SCACTUALIZADORVT.TACTRLSUC.FIULTTRANS%TYPE,
+      pa_Rowid                      ROWID,
+      pa_AltaSuc      IN OUT        NUMBER,
+      pa_OraErr       IN OUT NOCOPY SCACTUALIZADORVT.TAERROR_LOG.FCORA_ERR%TYPE,
+      pa_OraErrMesg   IN OUT NOCOPY SCACTUALIZADORVT.TAERROR_LOG.
+                                     FCORA_ERR_MESG%TYPE,
+      pa_ErrId        IN OUT NOCOPY SCACTUALIZADORVT.TAERROR_LOG.FIERR_ID%TYPE,
+      pa_ErrMsg       IN OUT NOCOPY SCACTUALIZADORVT.TAERROR_LOG.FCERR_MSG%TYPE);
+
+   PROCEDURE SPALTASUCURSAL (
+      pa_Pais         IN            SCACTUALIZADORVT.TACTRLSUC.FIPAISID%TYPE,
+      pa_Canal        IN            SCACTUALIZADORVT.TACTRLSUC.FICANAL%TYPE,
+      pa_Sucursal     IN            SCACTUALIZADORVT.TACTRLSUC.FISUCURSAL%TYPE,
+      pa_TranNum      IN            SCACTUALIZADORVT.TACTRLSUC.FIULTTRANS%TYPE,
+      pa_EstSuc       IN            SCACTUALIZADORVT.TACTRLSUC.FISTATADN%TYPE,
+      pa_EstTda       IN            SCACTUALIZADORVT.TACTRLSUC.FISTATUSTDA%TYPE,
+      pa_Rowid                      ROWID,
+      pa_OraErr       IN OUT NOCOPY SCACTUALIZADORVT.TAERROR_LOG.FCORA_ERR%TYPE,
+      pa_OraErrMesg   IN OUT NOCOPY SCACTUALIZADORVT.TAERROR_LOG.
+                                     FCORA_ERR_MESG%TYPE,
+      pa_ErrId        IN OUT NOCOPY SCACTUALIZADORVT.TAERROR_LOG.FIERR_ID%TYPE);
+
+   FUNCTION FNOBTENERFORMATONUMERO (pa_Valor        VARCHAR2,
+                                    pa_LongCampo    PLS_INTEGER,
+                                    pa_NumDec       PLS_INTEGER)
+      RETURN VARCHAR2;
+
+   PROCEDURE SPVALIDAREGISTRO (
+      pa_Pais         IN            SCACTUALIZADORVT.TATRNCRDT.FIPAISID%TYPE,
+      pa_Canal        IN            SCACTUALIZADORVT.TATRNCRDT.FICANAL%TYPE,
+      pa_TipoReg      IN            SCACTUALIZADORVT.TATRNCRDT.FITIPOREG%TYPE,
+      pa_RegAccion    IN OUT        SCACTUALIZADORVT.TAREGISTRO.FIREG_ACCION%TYPE,
+      pa_SpName       IN OUT        SCACTUALIZADORVT.TAREGISTRO.FCREG_SP_NAME%TYPE,
+      pa_OraErrMesg   IN OUT NOCOPY SCACTUALIZADORVT.TAERROR_LOG.
+                                     FCORA_ERR_MESG%TYPE,
+      pa_OraErr       IN OUT NOCOPY SCACTUALIZADORVT.TAERROR_LOG.FCORA_ERR%TYPE,
+      pa_ErrMsg       IN OUT        SCACTUALIZADORVT.TAERROR_LOG.FCERR_MSG%TYPE,
+      pa_ErrId        IN OUT NOCOPY SCACTUALIZADORVT.TAERROR_LOG.FIERR_ID%TYPE);
+
+   PROCEDURE SPGRABAERRDET (
+      pa_Rowid                      ROWID,
+      pa_OraErr       IN OUT NOCOPY SCACTUALIZADORVT.TAERROR_LOG.FCORA_ERR%TYPE,
+      pa_OraErrMesg   IN OUT NOCOPY SCACTUALIZADORVT.TAERROR_LOG.
+                                     FCORA_ERR_MESG%TYPE,
+      pa_ErrId        IN OUT NOCOPY SCACTUALIZADORVT.TAERROR_LOG.FIERR_ID%TYPE,
+      pa_ErrMsg       IN OUT NOCOPY SCACTUALIZADORVT.TAERROR_LOG.FCERR_MSG%TYPE);
+
+
+   PROCEDURE SPGRABAERRCAB (
+      pa_Rowid                      ROWID,
+      pa_OraErr       IN OUT NOCOPY SCACTUALIZADORVT.TAERROR_LOG.FCORA_ERR%TYPE,
+      pa_OraErrMesg   IN OUT NOCOPY SCACTUALIZADORVT.TAERROR_LOG.
+                                     FCORA_ERR_MESG%TYPE,
+      pa_ErrId        IN OUT NOCOPY SCACTUALIZADORVT.TAERROR_LOG.FIERR_ID%TYPE,
+      pa_ErrMsg       IN OUT NOCOPY SCACTUALIZADORVT.TAERROR_LOG.FCERR_MSG%TYPE);
+
+   PROCEDURE SPACTUALIZACTRLSUCERROR (
+      pa_RowidCtrlsuc   IN            ROWID,
+      pa_TranNum        IN            SCACTUALIZADORVT.TATRNCRCB.FITRANNO%TYPE,
+      pa_ErrProceso     IN OUT NOCOPY SCACTUALIZADORVT.TAERROR_LOG.
+                                       FCERR_PROCESO%TYPE,
+      pa_OraErr         IN OUT NOCOPY SCACTUALIZADORVT.TAERROR_LOG.FCORA_ERR%TYPE,
+      pa_OraErrMesg     IN OUT NOCOPY SCACTUALIZADORVT.TAERROR_LOG.
+                                       FCORA_ERR_MESG%TYPE,
+      pa_ErrId          IN OUT NOCOPY SCACTUALIZADORVT.TAERROR_LOG.FIERR_ID%TYPE,
+      pa_Rowid          IN OUT NOCOPY ROWID);
+
+   FUNCTION FNGRABAERROR (
+      pa_ErrMsg        SCACTUALIZADORVT.TAERROR_LOG.FCERR_MSG%TYPE,
+      pa_OraErr        SCACTUALIZADORVT.TAERROR_LOG.FCORA_ERR%TYPE,
+      pa_OraErrMesg    SCACTUALIZADORVT.TAERROR_LOG.FCORA_ERR_MESG%TYPE,
+      pa_ErrId         SCACTUALIZADORVT.TAERROR_LOG.FIERR_ID%TYPE,
+      pa_ErrProceso    SCACTUALIZADORVT.TAERROR_LOG.FCERR_PROCESO%TYPE,
+      pa_Rowid         ROWID)
+      RETURN VARCHAR2;
+
+   PROCEDURE SPHISTORICOCABECERO (
+      pa_RecTrancrecab   IN            SCACTUALIZADORVT.TATRNCRCB%ROWTYPE,
+      pa_Rowid                         ROWID,
+      pa_ErrProceso      IN OUT NOCOPY SCACTUALIZADORVT.TAERROR_LOG.
+                                        FCERR_PROCESO%TYPE,
+      pa_OraErr          IN OUT NOCOPY SCACTUALIZADORVT.TAERROR_LOG.FCORA_ERR%TYPE,
+      pa_OraErrMesg      IN OUT NOCOPY SCACTUALIZADORVT.TAERROR_LOG.
+                                        FCORA_ERR_MESG%TYPE,
+      pa_ErrId           IN OUT NOCOPY SCACTUALIZADORVT.TAERROR_LOG.FIERR_ID%TYPE,
+      pa_ErrMsg          IN OUT NOCOPY SCACTUALIZADORVT.TAERROR_LOG.FCERR_MSG%TYPE,
+      pa_notif_conting   IN OUT        VARCHAR);
+
+   PROCEDURE SPACTUALIZACTRLSUCTRAN (
+      pa_Pais         IN            SCACTUALIZADORVT.TATRNCRCB.FIPAISID%TYPE,
+      pa_Canal        IN            SCACTUALIZADORVT.TATRNCRCB.FICANAL%TYPE,
+      pa_Sucursal     IN            SCACTUALIZADORVT.TACTRLSUC.FISUCURSAL%TYPE,
+      pa_FecUltTran   IN            SCACTUALIZADORVT.TACTRLSUC.FDULTTRANS%TYPE,
+      pa_UltTransac   IN            SCACTUALIZADORVT.TACTRLSUC.FIULTTRANS%TYPE,
+      pa_ErrProceso   IN OUT NOCOPY SCACTUALIZADORVT.TAERROR_LOG.
+                                     FCERR_PROCESO%TYPE,
+      pa_OraErr       IN OUT NOCOPY SCACTUALIZADORVT.TAERROR_LOG.FCORA_ERR%TYPE,
+      pa_OraErrMesg   IN OUT NOCOPY SCACTUALIZADORVT.TAERROR_LOG.
+                                     FCORA_ERR_MESG%TYPE,
+      pa_ErrId        IN OUT NOCOPY SCACTUALIZADORVT.TAERROR_LOG.FIERR_ID%TYPE,
+      pa_ErrMsg       IN OUT NOCOPY SCACTUALIZADORVT.TAERROR_LOG.FCERR_MSG%TYPE);
+
+   PROCEDURE SPACTCTRLCONSECTIPTRAN (
+      pa_Pais         IN            SCACTUALIZADORVT.TACTRLTIPTRANS.FIPAISID%TYPE,
+      pa_Canal        IN            SCACTUALIZADORVT.TACTRLTIPTRANS.FICANAL%TYPE,
+      pa_Sucursal     IN            SCACTUALIZADORVT.TACTRLTIPTRANS.FISUCURSAL%TYPE,
+      pa_TranTipo     IN            SCACTUALIZADORVT.TACTRLTIPTRANS.FITRANTIPO%TYPE,
+      pa_ConsecTipo   IN            SCACTUALIZADORVT.TACTRLTIPTRANS.
+                                     FICONSECTIPO%TYPE,
+      pa_FecUltDisp   IN            SCACTUALIZADORVT.TACTRLTIPTRANS.
+                                     FDFEC_ULT_DISP%TYPE,
+      pa_Fitranno     IN            SCACTUALIZADORVT.TACTRLTIPTRANS.FITRANNO%TYPE,
+      pa_OraErr       IN OUT NOCOPY SCACTUALIZADORVT.TAERROR_LOG.FCORA_ERR%TYPE,
+      pa_OraErrMesg   IN OUT NOCOPY SCACTUALIZADORVT.TAERROR_LOG.
+                                     FCORA_ERR_MESG%TYPE,
+      pa_ErrId        IN OUT NOCOPY SCACTUALIZADORVT.TAERROR_LOG.FIERR_ID%TYPE,
+      pa_ErrMsg       IN OUT NOCOPY SCACTUALIZADORVT.TAERROR_LOG.FCERR_MSG%TYPE);
+
+   PROCEDURE SPDISPERSADETALLES (
+      pa_Pais          IN            SCACTUALIZADORVT.TATRNCRCB.FIPAISID%TYPE,
+      pa_Canal         IN            SCACTUALIZADORVT.TATRNCRCB.FICANAL%TYPE,
+      pa_Sucursal      IN            SCACTUALIZADORVT.TATRNCRCB.FISUCURSAL%TYPE,
+      pa_NumTran       IN            SCACTUALIZADORVT.TATRNCRCB.FITRANNO%TYPE,
+      pa_StatusSuc     IN OUT        SCACTUALIZADORVT.TACTRLSUC.FISTATADN%TYPE,
+      pa_OraErrMesg    IN OUT NOCOPY SCACTUALIZADORVT.TAERROR_LOG.
+                                      FCORA_ERR_MESG%TYPE,
+      pa_OraErr        IN OUT        SCACTUALIZADORVT.TAERROR_LOG.FCORA_ERR%TYPE,
+      pa_ErrMsg        IN OUT        SCACTUALIZADORVT.TAERROR_LOG.FCERR_MSG%TYPE,
+      pa_RecCabecero   IN            SCACTUALIZADORVT.TATRNCRCB%ROWTYPE,
+      pa_Rowid         IN OUT        ROWID);
+
+   PROCEDURE SPVALIDACONSECTIPTRAN (
+      pa_Pais         IN            SCACTUALIZADORVT.TATRNCRDT.FIPAISID%TYPE,
+      pa_Canal        IN            SCACTUALIZADORVT.TATRNCRDT.FICANAL%TYPE,
+      pa_Sucursal     IN            SCACTUALIZADORVT.TATRNCRDT.FISUCURSAL%TYPE,
+      pa_TranTipo     IN OUT        SCACTUALIZADORVT.TATRNCRCB.FITRANTIPO%TYPE,
+      pa_ConsecTipo   IN OUT        SCACTUALIZADORVT.TATRNCRCB.FICONSECTIPO%TYPE,
+      pa_OraErrMesg   IN OUT NOCOPY SCACTUALIZADORVT.TAERROR_LOG.
+                                     FCORA_ERR_MESG%TYPE,
+      pa_OraErr       IN OUT NOCOPY SCACTUALIZADORVT.TAERROR_LOG.FCORA_ERR%TYPE,
+      pa_ErrMsg       IN OUT        SCACTUALIZADORVT.TAERROR_LOG.FCERR_MSG%TYPE,
+      pa_ErrId        IN OUT NOCOPY SCACTUALIZADORVT.TAERROR_LOG.FIERR_ID%TYPE);
+
+   PROCEDURE SPVALIDATRANTIPO (
+      pa_TranTipo     IN            SCACTUALIZADORVT.TATRNCRCB.FITRANTIPO%TYPE,
+      pa_OraErr       IN OUT NOCOPY SCACTUALIZADORVT.TAERROR_LOG.FCORA_ERR%TYPE,
+      pa_OraErrMesg   IN OUT NOCOPY SCACTUALIZADORVT.TAERROR_LOG.
+                                     FCORA_ERR_MESG%TYPE,
+      pa_ErrId        IN OUT NOCOPY SCACTUALIZADORVT.TAERROR_LOG.FIERR_ID%TYPE);
+
+   PROCEDURE SPOBTENERSQL (
+      pa_DatoDetalle      IN            SCACTUALIZADORVT.TATRNCRDT.FCDATODETA%TYPE,
+      pa_ArrEstrucTabla   IN            SCACTUALIZADORVT.ARR_ESTRUCTURA_TAEST,
+      pa_SchemaDispersa   IN            SCACTUALIZADORVT.TACAT_SP.FCSP_OWNER%TYPE,
+      pa_Query            IN OUT NOCOPY SCACTUALIZADORVT.TAERROR_LOG.
+                                         FCERR_MSG%TYPE,
+      pa_ErrCod           IN OUT NOCOPY SCACTUALIZADORVT.TAERROR_LOG.
+                                         FCORA_ERR%TYPE,
+      pa_OraErrMesg       IN OUT NOCOPY SCACTUALIZADORVT.TAERROR_LOG.
+                                         FCORA_ERR_MESG%TYPE,
+      pa_ErrId            IN OUT NOCOPY SCACTUALIZADORVT.TAERROR_LOG.FIERR_ID%TYPE,
+      pa_ErrMsg           IN OUT NOCOPY SCACTUALIZADORVT.TAERROR_LOG.
+                                         FCERR_MSG%TYPE);
+
+   PROCEDURE SPCTRLDISPERSION (
+      pa_Pais     IN SCACTUALIZADORVT.TATRNCRCB.FIPAISID%TYPE,
+      pa_Canal    IN SCACTUALIZADORVT.TATRNCRCB.FICANAL%TYPE,
+      pa_SucIni   IN SCACTUALIZADORVT.TATRNCRCB.FISUCURSAL%TYPE,
+      pa_SucFin   IN SCACTUALIZADORVT.TATRNCRCB.FISUCURSAL%TYPE);
+
+
+   PROCEDURE SPDISPERSATRANSAC (
+      pa_SucursalIni   IN SCACTUALIZADORVT.TATRNCRCB.FISUCURSAL%TYPE,
+      pa_SucursalFin   IN SCACTUALIZADORVT.TATRNCRCB.FISUCURSAL%TYPE);
+END PAACTUALIZADOR;
+
+/
+
+  GRANT EXECUTE ON "SCACTUALIZADORVT"."PAACTUALIZADOR" TO "SCSISGES";
+  GRANT EXECUTE ON "SCACTUALIZADORVT"."PAACTUALIZADOR" TO "SCVENTASTIENDA";
+  GRANT EXECUTE ON "SCACTUALIZADORVT"."PAACTUALIZADOR" TO "USRACTVT";
+  GRANT EXECUTE ON "SCACTUALIZADORVT"."PAACTUALIZADOR" TO "USRINFFENIX";

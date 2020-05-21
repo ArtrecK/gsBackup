@@ -1,0 +1,144 @@
+--------------------------------------------------------
+--  DDL for Type TYHIJOREG_185
+--------------------------------------------------------
+
+  CREATE OR REPLACE EDITIONABLE TYPE "SCVENTASTIENDA"."TYHIJOREG_185" 
+   UNDER TYTRANSACCION
+(
+   FINEGOCIO NUMBER (3),
+   FISUCURSAL NUMBER (5),
+   FICTEID NUMBER (10),
+   FIDIGVERIF NUMBER (3),
+   FCUSERMARCAV VARCHAR2 (10 CHAR),
+   FCUSERMARCACAMB VARCHAR2 (10 CHAR),
+   FCUSERSURTE VARCHAR2 (10 CHAR),
+   FCFOLIOPARAM NUMBER (10),
+   FINOPEDIDO NUMBER (10),
+   FIPEDSTAT NUMBER (3),
+   FDPEDFEC DATE,
+   FDFECSURT DATE,
+   FDFECCANPED DATE,
+   FITIPOCTE NUMBER (3),
+   FITIPOVENTA NUMBER (3),
+   FIMCID NUMBER (5),
+   FDCREACION DATE,
+   FDMODIFICO DATE,
+   FCUSRMODIFICO VARCHAR2 (30),
+   CONSTRUCTOR FUNCTION TYHIJOREG_185 (
+      SELF              IN OUT NOCOPY TYHIJOREG_185,
+      pa_registerData                 XMLTYPE)
+      RETURN SELF AS RESULT,
+   OVERRIDING MEMBER FUNCTION FNPROCESAREGISTRO (
+      PACABECERO   IN scventastienda.TYCABECEROTXN)
+      RETURN INTEGER
+)
+   NOT FINAL INSTANTIABLE;
+/
+CREATE OR REPLACE EDITIONABLE TYPE BODY "SCVENTASTIENDA"."TYHIJOREG_185" 
+AS
+   /*************************************************************************************************
+   Proyecto: Sistema de Gestion
+   Descripcion: SUBTYPES PARA PROCESAMIENTO DE TRANSACCIONES DEL SENDER,TIPO DE REGISTRO 185
+   Creador: Cesar David Campos Garcia
+   Fecha de creacion: 20/05/2019
+   **************************************************************************************************/
+   CONSTRUCTOR FUNCTION TYHIJOREG_185 (
+      SELF              IN OUT NOCOPY TYHIJOREG_185,
+      pa_registerData                 XMLTYPE)
+      RETURN SELF AS RESULT
+   AS
+   BEGIN
+      pa_registerData.TOOBJECT (SELF);
+      RETURN;
+   END;
+   OVERRIDING MEMBER FUNCTION FNPROCESAREGISTRO (
+      PACABECERO   IN scventastienda.TYCABECEROTXN)
+      RETURN INTEGER
+   AS
+      VL_ERROR           VARCHAR2 (100);
+      CSL_0     CONSTANT PLS_INTEGER := 0;
+      CSL_1     CONSTANT PLS_INTEGER := 1;
+      VL_ORACOD          NUMBER;
+      VL_ORADESC         VARCHAR2 (2000);
+      CSL_200   CONSTANT PLS_INTEGER := 200;
+   BEGIN
+      BEGIN
+         VL_ERROR := 'ERROR AL ACTUALIZAR EN TAPEDIDOS';
+
+         MERGE INTO SCVENTASTIENDA.TAPEDIDOS DATOS
+              USING (SELECT PACABECERO.FIPAISID AS PAIS,
+                            PACABECERO.FICANALID AS CANAL,
+                            PACABECERO.FISUCURSALID AS SUC,
+                            SELF.FINOPEDIDO AS PEDIDO
+                       FROM DUAL) VALORES
+                 ON (    DATOS.FIPAIS = VALORES.PAIS
+                     AND DATOS.FICANAL = VALORES.CANAL
+                     AND DATOS.FISUCURSAL = VALORES.SUC
+                     AND DATOS.FINOPEDIDO = VALORES.PEDIDO)
+         WHEN MATCHED
+         THEN
+            UPDATE SET FCEMPNOSURTE = TRIM (SELF.FCUSERSURTE),
+                       FIPEDSTAT = SELF.FIPEDSTAT,
+                       FDPEDFEC = SELF.FDPEDFEC,
+                       FDFECSURT = SELF.FDFECSURT;
+
+         VL_ERROR := 'ERROR AL ACTUALIZAR EN PEDIDOS_CREDITO';
+
+         MERGE INTO SCVENTASTIENDA.PEDIDOS_CREDITO PC
+              USING (SELECT PACABECERO.FIPAISID AS PAIS,
+                            PACABECERO.FICANALID AS CANAL,
+                            PACABECERO.FISUCURSALID AS SUC,
+                            SELF.FINOPEDIDO AS PEDIDO
+                       FROM DUAL) VALORES
+                 ON (    PC.FIPAISID = VALORES.PAIS
+                     AND PC.FICANAL = VALORES.CANAL
+                     AND PC.FISUCURSAL = VALORES.SUC
+                     AND PC.FINOPEDIDO = VALORES.PEDIDO)
+         WHEN MATCHED
+         THEN
+            UPDATE SET
+               FCEMPNUM = TRIM (SELF.FCUSERSURTE),
+               FIPEDSTATUS = SELF.FIPEDSTAT,
+               FDFECHASURT = SELF.FDPEDFEC;
+      EXCEPTION
+         WHEN OTHERS
+         THEN
+            ROLLBACK;
+            VL_ORACOD := SQLCODE;
+            VL_ORADESC := SUBSTR (SQLERRM, CSL_0, CSL_200);
+            --SE LLAMA AL SP PARA GUARDAR TXN CON ERROR
+            SCVENTASTIENDA.SPTRANSACERROR (
+               PACABECERO.FIPAISID,
+               PACABECERO.FICANALID,
+               PACABECERO.FISUCURSALID,
+               PACABECERO.FITRANNO,
+               PACABECERO.FITRANTIPO,
+               PACABECERO.FICONSECTIPO,
+               PACABECERO.FDTRANSFECHR,
+               PACABECERO.FCTRANWS,
+               PACABECERO.FCTRANUSR,
+               FOBJDETALLE.ficonsdeta,
+               FOBJDETALLE.fitiporeg,
+               FOBJDETALLE.fcdatodeta,
+                  VL_ERROR
+               || ' -> '
+               || VL_ORACOD
+               || '-'
+               || VL_ORADESC
+               || '-> TYHIJOREG_185',
+               CSL_1,
+               VL_ORACOD,
+               VL_ORADESC);
+      END;
+
+      RETURN 0;
+   END;
+END;
+
+/
+
+  GRANT EXECUTE ON "SCVENTASTIENDA"."TYHIJOREG_185" TO "SCACTUALIZADORVT";
+  GRANT EXECUTE ON "SCVENTASTIENDA"."TYHIJOREG_185" TO "USRACTVT";
+  GRANT EXECUTE ON "SCVENTASTIENDA"."TYHIJOREG_185" TO "USRINFFENIX";
+  GRANT EXECUTE ON "SCVENTASTIENDA"."TYHIJOREG_185" TO "USRINFSISGES";
+  GRANT EXECUTE ON "SCVENTASTIENDA"."TYHIJOREG_185" TO "USRVENTAST";

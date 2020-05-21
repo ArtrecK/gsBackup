@@ -1,0 +1,22 @@
+--------------------------------------------------------
+--  DDL for Package PQPLANTILLAEMPLEADOS
+--------------------------------------------------------
+
+  CREATE OR REPLACE EDITIONABLE PACKAGE "SCSISGES"."PQPLANTILLAEMPLEADOS" 
+IS
+    -- Author  : CCAMPOS
+    -- Created : 25/02/2019 12:29:46 p. m.
+    -- Purpose : proceso que trae la plantilla activa de RH
+
+
+    PROCEDURE SPCARGAPLANTILLA (PA_FNNEGOCIO    IN     VARCHAR2,
+                                PA_FNCODERROR      OUT INTEGER,
+                                PA_FCDESERROR      OUT VARCHAR2);
+END PQPLANTILLAEMPLEADOS;
+
+/
+
+  GRANT EXECUTE ON "SCSISGES"."PQPLANTILLAEMPLEADOS" TO "SCVENTASTIENDA";
+  GRANT EXECUTE ON "SCSISGES"."PQPLANTILLAEMPLEADOS" TO "USRINFFENIX";
+  GRANT EXECUTE ON "SCSISGES"."PQPLANTILLAEMPLEADOS" TO "USRINFSISGES";
+  GRANT EXECUTE ON "SCSISGES"."PQPLANTILLAEMPLEADOS" TO "USRSISGES";

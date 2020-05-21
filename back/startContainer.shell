@@ -1,0 +1,58 @@
+#!/bin/bash
+
+usage()
+{
+    echo "Inicia un contenedor de Oracle con el Storage indicado"
+    echo "Parametros:"
+    echo "     -s | --storage   Path donde estará el almacenamiento del contenedor."
+    echo "                      Debe ser una carpeta que puede crearse con los siguientes comandos:"
+    echo "                      mkdir oracle_storage"
+    echo "                      sudo chown 54321 ./oracle_storage"
+    echo "                      sudo chown :54321 ./oracle_storage"
+    echo "     -h | --help      Imprime este mensaje de ayuda"
+    exit 1
+}
+
+POSITIONAL=()
+while [[ $# -gt 0 ]]
+do
+key="$1"
+
+case $key in
+    -s|--storage)
+    STORAGE_PATH="$2"
+    shift # past argument
+    shift # past value
+    ;;
+    -h|--help)
+    usage
+    shift # past argument
+    ;;
+    *)    # unknown option
+    POSITIONAL+=("$1") # save it in an array for later
+    shift # past argument
+    ;;
+esac
+done
+set -- "${POSITIONAL[@]}" # restore positional parameters
+if [ -z "$STORAGE_PATH" ]
+then
+      usage
+fi
+
+echo "Se iniciará el contenedor utilizando la carpeta $STORAGE_PATH"
+
+storage_uid=$(stat -c '%u' $STORAGE_PATH)
+
+if [ "$storage_uid" -ne "54321" ]
+then
+      usage
+fi
+echo "Descargando utPLSQL ..."
+curl -LOk $(curl -k --silent https://api.github.com/repos/utPLSQL/utPLSQL/releases/latest | awk '/browser_download_url/ { print $2 }' | grep ".zip" | sed 's/"//g') 
+echo "Finalizó la descarga."
+currentPath=$(pwd)
+
+echo "Inciando contenedor con scripts de setup: $currentPath"
+echo "docker run -d --name ora_12_1 -p 1521:1521 -p 5500:5500 -e SQLPATH=/opt/oracle/scripts/setup -e ORACLE_SID=ORCLCDB -e ORACLE_PDB=ORCLPDB1 -e ORACLE_PWD=0racleD3v -e ORACLE_CHARACTERSET=AL32UTF8 -v $STORAGE_PATH:/opt/oracle/oradata -v $currentPath:/opt/oracle/scripts/setup oracle/database:12.2.0.1-ee"
+docker run -d --name ora_12_1 -p 1521:1521 -p 5500:5500 -e SQLPATH=/opt/oracle/scripts/setup -e ORACLE_SID=ORCLCDB -e ORACLE_PDB=ORCLPDB1 -e ORACLE_PWD=0racleD3v -e ORACLE_CHARACTERSET=AL32UTF8 -v $STORAGE_PATH:/opt/oracle/oradata -v $currentPath:/opt/oracle/scripts/setup oracle/database:12.2.0.1-ee

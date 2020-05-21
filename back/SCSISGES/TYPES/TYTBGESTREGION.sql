@@ -1,0 +1,10 @@
+--------------------------------------------------------
+--  DDL for Type TYTBGESTREGION
+--------------------------------------------------------
+
+  CREATE OR REPLACE EDITIONABLE TYPE "SCSISGES"."TYTBGESTREGION" AS TABLE OF SCSISGES.TYOBGESTREGION;
+
+/
+
+  GRANT EXECUTE ON "SCSISGES"."TYTBGESTREGION" TO "USRINFFENIX";
+  GRANT EXECUTE ON "SCSISGES"."TYTBGESTREGION" TO "USRSISGES";

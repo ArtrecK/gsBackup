@@ -1,0 +1,11 @@
+--------------------------------------------------------
+--  DDL for Type TYTBGESTIONACUM
+--------------------------------------------------------
+
+  CREATE OR REPLACE EDITIONABLE TYPE "SCSISGES"."TYTBGESTIONACUM" 
+    AS TABLE OF SCSISGES.TYOBGESTIONACUM;
+
+/
+
+  GRANT EXECUTE ON "SCSISGES"."TYTBGESTIONACUM" TO "USRINFFENIX";
+  GRANT EXECUTE ON "SCSISGES"."TYTBGESTIONACUM" TO "USRSISGES";

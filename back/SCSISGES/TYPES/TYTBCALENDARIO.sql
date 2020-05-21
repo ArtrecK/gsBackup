@@ -1,0 +1,11 @@
+--------------------------------------------------------
+--  DDL for Type TYTBCALENDARIO
+--------------------------------------------------------
+
+  CREATE OR REPLACE EDITIONABLE TYPE "SCSISGES"."TYTBCALENDARIO" 
+    IS TABLE OF SCSISGES.TYOBJCALENDARIO;
+
+/
+
+  GRANT EXECUTE ON "SCSISGES"."TYTBCALENDARIO" TO "USRINFFENIX";
+  GRANT EXECUTE ON "SCSISGES"."TYTBCALENDARIO" TO "USRINFSISGES";

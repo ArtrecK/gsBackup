@@ -1,0 +1,43 @@
+--------------------------------------------------------
+--  DDL for Package PAFXGESTIONDIA
+--------------------------------------------------------
+
+  CREATE OR REPLACE EDITIONABLE PACKAGE "SCSISGES"."PAFXGESTIONDIA" 
+IS
+    -- Consultas para contar gestiones por sucursal, regional, zonal, nacional
+    -- Author  : 909511 - MJGM
+
+    PROCEDURE SPNUMGESTIONESXNIV (PA_NIVEL        IN     NUMBER,
+                                  PA_IDCONSULTA   IN     NUMBER,
+                                  PA_CURDATOS        OUT SYS_REFCURSOR,
+                                  PA_OCODIGO         OUT INTEGER,
+                                  PA_OMENSAJE        OUT VARCHAR2,
+                                  PA_ODETALLE        OUT VARCHAR2);
+
+    FUNCTION FNGETGESTIONEMP (PA_IDCONSULTA NUMBER)
+        RETURN SYS_REFCURSOR;
+
+    FUNCTION FNGETGESTIONSUC (PA_IDCONSULTA NUMBER)
+        RETURN SYS_REFCURSOR;
+
+    FUNCTION FNGETGESTIONREGI (PA_IDCONSULTA NUMBER)
+        RETURN SYS_REFCURSOR;
+
+    FUNCTION FNGETGESTIONZONA (PA_IDCONSULTA NUMBER)
+        RETURN SYS_REFCURSOR;
+
+    FUNCTION FNGETGESTIONPAIS (PA_IDCONSULTA NUMBER)
+        RETURN SYS_REFCURSOR;
+
+    FUNCTION FNGETCURDATOSVAC
+        RETURN SYS_REFCURSOR;
+
+    FUNCTION FNGERENTESUC (PA_FIIDCECOSUC    IN NUMBER,
+                           PA_FIIDSUCURSAL   IN NUMBER)
+        RETURN VARCHAR2;
+END PAFXGESTIONDIA;
+
+/
+
+  GRANT EXECUTE ON "SCSISGES"."PAFXGESTIONDIA" TO "USRINFFENIX";
+  GRANT EXECUTE ON "SCSISGES"."PAFXGESTIONDIA" TO "USRSISGES";

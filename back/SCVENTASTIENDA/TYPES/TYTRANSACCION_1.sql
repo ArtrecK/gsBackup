@@ -1,0 +1,24 @@
+--------------------------------------------------------
+--  DDL for Type TYTRANSACCION
+--------------------------------------------------------
+
+  CREATE OR REPLACE EDITIONABLE TYPE "SCVENTASTIENDA"."TYTRANSACCION" AS OBJECT
+                  (
+                     FOBJDETALLE SCVENTASTIENDA.TYDETALLETXN,
+                     CONSTRUCTOR FUNCTION TYTRANSACCION (
+                        SELF              IN OUT NOCOPY TYTRANSACCION,
+                        pa_registerData                 XMLTYPE)
+                        RETURN SELF AS RESULT,
+                     NOT INSTANTIABLE MEMBER FUNCTION FNPROCESAREGISTRO (
+                        PACABECERO IN scventastienda.TYCABECEROTXN)
+                        RETURN INTEGER)
+                     NOT FINAL
+                     NOT INSTANTIABLE;
+
+/
+
+  GRANT EXECUTE ON "SCVENTASTIENDA"."TYTRANSACCION" TO "USRVENTAST";
+  GRANT EXECUTE ON "SCVENTASTIENDA"."TYTRANSACCION" TO "SCACTUALIZADORVT";
+  GRANT EXECUTE ON "SCVENTASTIENDA"."TYTRANSACCION" TO "USRACTVT";
+  GRANT EXECUTE ON "SCVENTASTIENDA"."TYTRANSACCION" TO "USRINFFENIX";
+  GRANT EXECUTE ON "SCVENTASTIENDA"."TYTRANSACCION" TO "USRINFSISGES";

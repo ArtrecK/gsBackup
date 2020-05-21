@@ -1,0 +1,274 @@
+--------------------------------------------------------
+--  DDL for Package Body PQFXJOBGEOGRAFIA
+--------------------------------------------------------
+
+  CREATE OR REPLACE EDITIONABLE PACKAGE BODY "SCSISGES"."PQFXJOBGEOGRAFIA" IS
+  -- Author  : 149766 - Arturo Lopez Patricio
+  -- Created : 10/09/2018
+  -- Purpose : proceso de geografias Mexico y Lam
+
+
+   CSL_0      CONSTANT INTEGER := 0;
+   CSL_1      CONSTANT INTEGER := 1;
+   CSL_2      CONSTANT INTEGER := 2;
+   CSL_1040 CONSTANT INTEGER := 1040;
+   CSL_9034 CONSTANT INTEGER := 9034;
+   CSL_MEXICO CONSTANT VARCHAR2(6) := 'MEXICO';
+   CSL_LAM    CONSTANT VARCHAR2(3) := 'LAM';
+   CSL_USRSISGES   CONSTANT VARCHAR2(9) := 'USRSISGES';
+
+PROCEDURE SPPROCESAPAIS IS
+
+BEGIN
+
+MERGE INTO  SCSISGES.TCPAIS PS USING (SELECT  DISTINCT CG.FIIDPAIS  AS FIIDPAIS,
+                                               CASE
+                                               WHEN CG.FIIDPAIS = CSL_1 THEN CSL_1
+                                               ELSE CSL_2
+                                               END  AS FINUMPAIS,
+                                               CG.FCPAIS        AS FCNOMPAIS,
+                                               TRUNC(SYSDATE)   AS FDFECACTUAL,
+                                               CASE
+                                               WHEN CG.FIIDPAIS = CSL_1 THEN CSL_MEXICO
+                                               ELSE CSL_LAM
+                                               END  AS FCPAIS
+                                       FROM SCSISGES.TACECOGEOGRAFIA CG
+                                       WHERE CG.FIIDPAIS>=CSL_0
+                                         AND  CG.FIIDPAIS=CG.FIIDPAIS+CSL_0
+                                       ORDER BY FIIDPAIS) VP
+ON    (    PS.FIIDPAIS  = VP.FIIDPAIS )
+
+WHEN MATCHED THEN
+UPDATE SET
+ PS.FINUMPAIS      = VP.FINUMPAIS,
+ PS.FCNOMPAIS      = VP.FCNOMPAIS,
+ PS.FDFECACTUAL    = VP.FDFECACTUAL,
+ PS.FCPAIS         = VP.FCPAIS,
+ PS.FDMODIFICACION=SYSDATE,
+ PS.FCUSRMODIFICO=CSL_USRSISGES
+WHEN NOT MATCHED THEN
+INSERT (FIIDPAIS,
+       FINUMPAIS,
+       FCNOMPAIS,
+       FDFECACTUAL,
+       FCPAIS,
+       FIESTATUS,
+       FCUSRMODIFICO
+       )
+VALUES (VP.FIIDPAIS,
+       VP.FINUMPAIS,
+       VP.FCNOMPAIS,
+       VP.FDFECACTUAL,
+       VP.FCPAIS,
+       CSL_1,
+       CSL_USRSISGES);
+COMMIT;
+
+EXCEPTION
+  WHEN OTHERS THEN
+    ROLLBACK;
+    SCSISGES.SPERRORES(SYSDATE,SQLCODE,
+              SUBSTR(SQLERRM,0,200),'PQFXJOBGEOGRAFIA.SPPROCESAPAIS');
+END SPPROCESAPAIS;
+
+
+PROCEDURE SPPROCTERRITORIO
+  (
+     PA_TBSUCURSALES SCSISGES.TYTBGEOGRAFIAS
+  ) IS
+
+BEGIN
+
+MERGE INTO  SCSISGES.TAFXTERRITORIOS TER USING (SELECT  DISTINCT CG.FIIDCCBISABUELO AS FIIDTERRITORIO,
+                                                   CG.FIIDPAIS AS FIIDPAIS,
+                                                   CG.FCNOMBREBISABUELO AS FCNOMTERRITORIO,
+                                                   SYSDATE AS ULTIMA_MODIFICACION,
+                                                   CSL_USRSISGES AS USUARIO_MODIFICO
+                                            FROM TABLE(PA_TBSUCURSALES) CG
+                                            WHERE CG.FIIDPAIS>=CSL_0
+                                            AND   CG.FIIDCCBISABUELO IS NOT NULL
+                                            AND   CG.FIIDENTIDAD     IS NOT NULL
+                                            ORDER BY FIIDPAIS,FIIDTERRITORIO) VP
+ON    (    TER.FIIDTERRITORIO = VP.FIIDTERRITORIO
+      AND  TER.FIIDPAIS  = VP.FIIDPAIS )
+
+WHEN MATCHED THEN
+UPDATE SET
+ TER.FCDESCTERRIRORIO= VP.FCNOMTERRITORIO,
+ TER.FDMODIFICACION = VP.ULTIMA_MODIFICACION,
+ TER.FCUSRMODIFICO    = VP.USUARIO_MODIFICO
+WHEN NOT MATCHED THEN
+INSERT (FIIDPAIS,
+       FIIDTERRITORIO,
+       FCDESCTERRIRORIO,
+       FIESTATUS,
+       FDMODIFICACION,
+       FCUSRMODIFICO )
+VALUES (VP.FIIDPAIS,
+        VP.FIIDTERRITORIO,
+        VP.FCNOMTERRITORIO,
+        CSL_1,
+        VP.ULTIMA_MODIFICACION,
+        VP.USUARIO_MODIFICO);
+
+COMMIT;
+
+EXCEPTION
+  WHEN OTHERS THEN
+    ROLLBACK;
+    SCSISGES.SPERRORES(SYSDATE,SQLCODE,
+       SUBSTR(SQLERRM,0,200),'PQFXJOBGEOGRAFIA.SPPROCTERRITORIO');
+
+END SPPROCTERRITORIO;
+
+PROCEDURE SPPROCZONAS
+ (
+   PA_TBSUCURSALES SCSISGES.TYTBGEOGRAFIAS
+  ) IS
+
+BEGIN
+
+MERGE INTO  SCSISGES.TAFXZONAS TZ USING (SELECT  DISTINCT(CG.FIIDCCABUELO)  AS FIIDZONA,
+                                                      CG.FIIDPAIS           AS FIIDPAIS,
+                                                      CG.FIIDCCBISABUELO    AS FIIDPLAZA,
+                                                      CG.FCNOMBREABUELO     AS FCDESCZONAS,
+                                                      SYSDATE               AS ULTIMA_MODIFICACION ,
+                                                      CSL_USRSISGES         AS USUARIO_MODIFICO
+                                               FROM TABLE(PA_TBSUCURSALES) CG
+                                                WHERE CG.FIIDPAIS>=CSL_0
+                                                AND   CG.FIIDCCBISABUELO IS NOT NULL
+                                                AND   CG.FIIDCCABUELO    IS NOT NULL
+                                                AND   CG.FIIDENTIDAD     IS NOT NULL) VV
+ON    (    TZ.FIIDTERRITORIO    = VV.FIIDPLAZA
+      AND  TZ.FIIDPAIS     = VV.FIIDPAIS
+      AND  TZ.FIIDZONA = VV.FIIDZONA)
+
+WHEN MATCHED THEN
+UPDATE SET
+ TZ.FCDESCZONAS      = VV.FCDESCZONAS,
+ TZ.FDMODIFICACION = VV.ULTIMA_MODIFICACION,
+ TZ.FCUSRMODIFICO    = VV.USUARIO_MODIFICO
+WHEN NOT MATCHED THEN
+INSERT (FIIDPAIS,
+       FIIDTERRITORIO,
+       FIIDZONA,
+       FCDESCZONAS,
+       FIESTATUS,
+       FDMODIFICACION,
+       FCUSRMODIFICO )
+VALUES (VV.FIIDPAIS,
+        VV.FIIDPLAZA,
+        VV.FIIDZONA,
+        VV.FCDESCZONAS,
+        CSL_1,
+        VV.ULTIMA_MODIFICACION,
+        VV.USUARIO_MODIFICO);
+
+COMMIT;
+
+EXCEPTION
+  WHEN OTHERS THEN
+    ROLLBACK;
+    SCSISGES.SPERRORES(SYSDATE,SQLCODE,
+    SUBSTR(SQLERRM,0,200),'PQFXJOBGEOGRAFIA.SPPROCZONAS');
+
+END SPPROCZONAS;
+
+PROCEDURE SPPROCREGIONES
+  (
+     PA_TBSUCURSALES SCSISGES.TYTBGEOGRAFIAS
+  ) IS
+
+BEGIN
+
+MERGE INTO  SCSISGES.TAFXREGIONES TR USING (SELECT  DISTINCT(CG.FIIDCCPADRE)    AS FIIDREGION,
+                                                      CG.FIIDPAIS               AS FIIDPAIS,
+                                                      CG.FIIDCCBISABUELO        AS FIIDPLAZA,
+                                                      CG.FIIDCCABUELO           AS FIIDZONA,
+                                                      CG.FCNOMBREPADRE          AS FCDESCREGION,
+                                                      SYSDATE                   AS ULTIMA_MODIFICACION ,
+                                                      CSL_USRSISGES             AS USUARIO_MODIFICO
+                                               FROM TABLE(PA_TBSUCURSALES) CG
+                                               WHERE CG.FIIDPAIS>=CSL_0
+                                               AND   CG.FIIDCCBISABUELO IS NOT NULL
+                                               AND   CG.FIIDCCABUELO    IS NOT NULL
+                                               AND   CG.FIIDCCPADRE     IS NOT NULL
+                                               AND   CG.FIIDENTIDAD     IS NOT NULL
+                                               AND   CG.FIIDCCPADRE NOT IN (CSL_9034,CSL_1040) )VD
+ON    (    TR.FIIDTERRITORIO    = VD.FIIDPLAZA
+      AND  TR.FIIDPAIS     = VD.FIIDPAIS
+      AND  TR.FIIDZONA = VD.FIIDZONA
+      AND  TR.FIIDREGION = VD.FIIDREGION)
+
+WHEN MATCHED THEN
+UPDATE SET
+ TR.FCDESCREGION      = VD.FCDESCREGION,
+ TR.FDMODIFICACION = VD.ULTIMA_MODIFICACION,
+ TR.FCUSRMODIFICO    = VD.USUARIO_MODIFICO
+WHEN NOT MATCHED THEN
+INSERT (FIIDPAIS,
+       FIIDTERRITORIO,
+       FIIDZONA,
+       FIIDREGION,
+       FCDESCREGION,
+       FIESTATUS,
+       FDMODIFICACION,
+       FCUSRMODIFICO )
+VALUES (VD.FIIDPAIS,
+        VD.FIIDPLAZA,
+        VD.FIIDZONA,
+        VD.FIIDREGION,
+        VD.FCDESCREGION,
+        CSL_1,
+        VD.ULTIMA_MODIFICACION,
+        VD.USUARIO_MODIFICO);
+
+COMMIT;
+
+EXCEPTION
+  WHEN OTHERS THEN
+    ROLLBACK;
+    SCSISGES.SPERRORES(SYSDATE,SQLCODE,
+       SUBSTR(SQLERRM,0,200),'PQFXJOBGEOGRAFIA.SPPROCREGIONES');
+END SPPROCREGIONES;
+PROCEDURE SPBAJATERRITORIO
+  (
+   PA_TBSUCURBAZ SCSISGES.TYTBGEOGRAFIAS
+  ,PA_TBSUCUREKT SCSISGES.TYTBGEOGRAFIAS
+  ) IS
+
+BEGIN
+
+      DELETE
+      FROM SCSISGES.TAFXTERRITORIOS TE
+      WHERE NOT EXISTS(
+      SELECT GEO.FIIDPAIS,
+             GEO.FIIDCCBISABUELO
+      FROM
+      (SELECT CG.FIIDPAIS,
+             CG.FIIDCCBISABUELO
+        FROM TABLE(PA_TBSUCURBAZ) CG
+      UNION
+      SELECT EKT.FIIDPAIS,
+             EKT.FIIDCCBISABUELO
+      FROM TABLE(PA_TBSUCUREKT)EKT)GEO
+      WHERE   GEO.FIIDPAIS=TE.FIIDPAIS
+        AND   GEO.FIIDCCBISABUELO=TE.FIIDTERRITORIO
+      );
+
+COMMIT;
+
+EXCEPTION
+  WHEN OTHERS THEN
+    ROLLBACK;
+    SCSISGES.SPERRORES(SYSDATE,SQLCODE,
+         SUBSTR(SQLERRM,0,200),'PQFXGEOGRAFIA.SPBAJATERRITORIO');
+
+END SPBAJATERRITORIO;
+END PQFXJOBGEOGRAFIA;
+
+/
+
+  GRANT EXECUTE ON "SCSISGES"."PQFXJOBGEOGRAFIA" TO "USRINFFENIX";
+  GRANT EXECUTE ON "SCSISGES"."PQFXJOBGEOGRAFIA" TO "USRINFSISGES";
+  GRANT EXECUTE ON "SCSISGES"."PQFXJOBGEOGRAFIA" TO "USRSISGES";

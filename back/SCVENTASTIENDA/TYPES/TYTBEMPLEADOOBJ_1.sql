@@ -1,0 +1,9 @@
+--------------------------------------------------------
+--  DDL for Type TYTBEMPLEADOOBJ
+--------------------------------------------------------
+
+  CREATE OR REPLACE EDITIONABLE TYPE "SCVENTASTIENDA"."TYTBEMPLEADOOBJ" AS TABLE OF SCVENTASTIENDA.TYOBEMPLEADOOBJ;
+
+/
+
+  GRANT EXECUTE ON "SCVENTASTIENDA"."TYTBEMPLEADOOBJ" TO "USRVENTAST";

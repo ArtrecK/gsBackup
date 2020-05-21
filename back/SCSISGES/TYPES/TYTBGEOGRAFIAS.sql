@@ -1,0 +1,10 @@
+--------------------------------------------------------
+--  DDL for Type TYTBGEOGRAFIAS
+--------------------------------------------------------
+
+  CREATE OR REPLACE EDITIONABLE TYPE "SCSISGES"."TYTBGEOGRAFIAS" IS TABLE OF SCSISGES.TYOBJGEOGRAFIA;
+
+/
+
+  GRANT EXECUTE ON "SCSISGES"."TYTBGEOGRAFIAS" TO "USRINFFENIX";
+  GRANT EXECUTE ON "SCSISGES"."TYTBGEOGRAFIAS" TO "USRINFSISGES";
