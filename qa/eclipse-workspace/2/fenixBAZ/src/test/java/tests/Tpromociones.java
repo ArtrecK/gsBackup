@@ -1,0 +1,25 @@
+package tests;
+
+import java.io.IOException;
+
+import org.testng.annotations.Test;
+
+import pages.homePage;
+import pages.navegacionPages;
+
+public class Tpromociones extends baseTest{
+
+	//@Test
+	public void promocionesTest () throws IOException {
+		
+		homePage home = new homePage(driver);
+		navegacionPages nPage = new navegacionPages(driver);
+		home.launchHome();
+		
+		nPage.closePopUpPrincipal();
+		nPage.pausa(5000);
+		nPage.click("//div[2]/img");
+		nPage.closePopUp();
+		
+	}
+}

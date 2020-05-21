@@ -1,0 +1,155 @@
+package tests;
+
+import java.io.IOException;
+
+import org.testng.annotations.Test;
+
+import pages.homePage;
+import pages.navegacionPages;
+
+public class Tcartera extends baseTest {
+
+	@Test
+	public void carteraTest() throws IOException {
+
+		homePage home = new homePage(driver);
+		navegacionPages nPage = new navegacionPages(driver);
+
+		// Abrir pagina principal
+		home.launchHome();
+		nPage.pausa(2000);
+		nPage.closePopUpPrincipal();
+
+		// Abrir Mi Cartera
+		nPage.pausa(2000);
+		nPage.click("//div[2]/div/div/a[2]");
+
+		// Conteo ctes LC activa y sin surtimiento
+		nPage.pausa(2000);
+		nPage.click("//div[2]/span");
+		nPage.pausa(1000);
+		nPage.click("//table[2]/tbody/tr[2]/td/div/table/tbody/tr[4]/td/label");
+		nPage.pausa(1000);
+		nPage.click("//table[2]/tbody/tr[2]/td/div/table/tbody/tr[5]/td/label");
+		nPage.pausa(1000);
+		nPage.click("//table[2]/tbody/tr[2]/td/div/table/tbody/tr[6]/td/label");
+		nPage.closePopUp();
+
+		// Conteo ctes con 1 o + pedidos en atraso
+		nPage.pausa(2000);
+		nPage.click("//div[4]/table/tbody/tr/td[2]/div/div[2]/span");
+		nPage.pausa(1000);
+		nPage.click("//tr[4]/td/label");
+		nPage.pausa(1000);
+		nPage.click("//tr[5]/td/label");
+		nPage.pausa(1000);
+		nPage.click("//tr[6]/td/label");
+		nPage.pausa(1000);
+		nPage.click("//tr[7]/td/label");
+		nPage.pausa(1000);
+		nPage.click("//tr[8]/td/label");
+		nPage.closePopUp();
+
+		// Cubeta intermedia
+		nPage.pausa(1000);
+		nPage.click("//div[24]/span");
+		nPage.closePopUp();
+
+		// Conteo Ctes con Ped s/atraso
+		nPage.pausa(2000);
+		nPage.click("//div[5]/table/tbody/tr/td[2]/div/div/span");
+		nPage.closePopUp();
+
+		// Cubeta intermedia
+		nPage.pausa(1000);
+		nPage.click("//div[6]/span");
+		nPage.closePopUp();
+
+		// Conteo Ctes con 50% avance al plazo
+		nPage.pausa(2000);
+		nPage.click("//div[8]/table/tbody/tr/td[2]/div/div[2]/span");
+		nPage.closePopUp();
+
+		// Conteo Ctes con 50% avance al plazo A
+		nPage.pausa(2000);
+		nPage.click("//span[2]");
+		nPage.closePopUp();
+
+		// Conteo Ctes con 50% avance al plazo B
+		nPage.pausa(2000);
+		nPage.click("//td[2]/div/span[2]");
+		nPage.closePopUp();
+
+		// Cubeta intermedia
+		nPage.pausa(1000);
+		nPage.click("//div[9]/span");
+		nPage.closePopUp();
+
+		// Conteo Ctes a . de liquidar
+		nPage.pausa(2000);
+		nPage.click("//div[11]/table/tbody/tr/td[2]/div/div[2]/span");
+		nPage.closePopUp();
+
+		// Cubeta intermedia
+		nPage.pausa(1000);
+		nPage.click("//div[12]/span");
+		nPage.closePopUp();
+
+		// Conteo Ctes liquitaron todos los pedidos
+		nPage.pausa(2000);
+		nPage.click("//div[14]/table/tbody/tr/td[2]/div/div[2]/span");
+		nPage.closePopUp();
+
+		// Cubeta intermedia
+		nPage.pausa(1000);
+		nPage.click("//div[12]/span");
+		nPage.closePopUp();
+
+		// Conteo Ctes 3 a 4 meses s/pedido
+		nPage.pausa(2000);
+		nPage.click("//div[15]/table/tbody/tr/td[2]/div/div[2]/span");
+		nPage.closePopUp();
+
+		// Cubeta intermedia
+		nPage.pausa(1000);
+		nPage.click("//div[12]/span");
+		nPage.closePopUp();
+
+		// Conteo Ctes 5 a 6 meses s/pedido
+		nPage.pausa(2000);
+		nPage.click("//div[17]/table/tbody/tr/td[2]/div/div[2]/span");
+		nPage.closePopUp();
+
+		// Cubeta intermedia
+		nPage.pausa(1000);
+		nPage.click("//div[12]/span");
+		nPage.closePopUp();
+
+		// Conteo Ctes 17 a 12 meses s/pedido
+		nPage.pausa(2000);
+		nPage.click("//div[19]/table/tbody/tr/td[2]/div/div[2]/span");
+		nPage.closePopUp();
+
+		// Cubeta intermedia
+		nPage.pausa(1000);
+		nPage.click("//div[12]/span");
+		nPage.closePopUp();
+
+		// Conteo Ctes 13 a 24 meses s/pedido
+		nPage.pausa(2000);
+		nPage.click("//div[21]/table/tbody/tr/td[2]/div/div[2]/span");
+		nPage.closePopUp();
+
+		// Cubeta intermedia
+		nPage.pausa(1000);
+		nPage.click("//div[12]/span");
+		nPage.closePopUp();
+
+		// Conteo Ctes bloqueo 2 años s/pedido (inactividad)
+		nPage.pausa(2000);
+		nPage.click("//div[23]/table/tbody/tr/td[2]/div/div[2]/span");
+		nPage.closePopUp();
+
+	}
+
+}

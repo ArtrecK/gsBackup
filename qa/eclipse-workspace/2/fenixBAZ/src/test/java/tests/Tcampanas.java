@@ -1,0 +1,23 @@
+package tests;
+
+import java.io.IOException;
+
+import org.testng.annotations.Test;
+
+import pages.homePage;
+import pages.navegacionPages;
+
+public class Tcampanas extends baseTest{
+
+	//@Test
+	public void campanasTest() throws IOException{
+		
+		homePage home = new homePage(driver);
+		navegacionPages nPage = new navegacionPages(driver);
+		
+		home.launchHome();
+		
+		
+		
+	}
+}
