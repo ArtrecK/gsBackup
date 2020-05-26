@@ -1,0 +1,100 @@
+http://localhost:8090/job/Tasas/job/WsAutentificacionSimulador/configure
+
+
+pipeline {
+    environment {
+        def SLNNAME = "WsAutentificacionSimulador.sln"
+        def PROJECTNAME = "WsAutentificacionSimulador.csproj"
+        def PROJECTKEY = "WsAutentificacionSimulador"
+        def NAME = "WsAutentificacionSimulador"
+        def NAMEPACKAGE = "wsAutentificacionSimulador"
+        def URLSONAR_QA = "http://10.54.68.76:9000"
+        def URLSONAR_PROD = "http://10.54.68.51:9000"
+        //def LOGINSONAR_LOCAL = "0ce386b563571de412e380cc8b4bffe971bc1db1"
+        //Texto to Token = MiAccesoMercadeo -> abdc1e88fac2d03d5364290aaaa2a7de0e4a1888
+        def LOGINSONAR_QA = "abdc1e88fac2d03d5364290aaaa2a7de0e4a1888"
+        def LOGINSONAR_PROD = "f537a2c7e263178a5941d1528810b65512338b24"
+        def GITPATH = "http://10.51.206.114:8001/tasas/wsautentificacionsimulador.git"
+    }
+    agent any
+    parameters {
+        booleanParam(name: 'CHECKMARXS_ANALYSIS', defaultValue: false, description: 'Perform the CHECKMARXS analysis')
+        booleanParam(name: 'SONARQUBE_ANALYSIS', defaultValue: false, description: 'Perform the SONARQUBE analysis')
+        choice(name: 'SONARQUBE_SERVER', choices: ['SonarQube Productivo', 'SonarQube QA'], description: 'Server to publish the analysis') 
+        string(name: 'PACKAGE_VERSION', defaultValue: '1.0.0', description: '')
+    }
+    stages {
+        stage('Clean Workspace'){
+            steps {
+                cleanWs()
+            }
+        }
+        stage('GIT Checkout') { 
+            steps {
+                git branch: "master", credentialsId: '3cabf9fb-cffa-4f24-a2e3-a7608a895e03', url: "${GITPATH}"
+            }
+        }
+        stage('Checkmarx analysis') {
+            when {
+                expression { return params.CHECKMARXS_ANALYSIS ==~ /(?i)(Y|YES|T|TRUE|ON|RUN)/ }
+            }
+            steps {
+                step([$class: 'CxScanBuilder', comment: '', credentialsId: '', excludeFolders: '', excludeOpenSourceFolders: '', exclusionsSetting: 'global', failBuildOnNewResults: false, failBuildOnNewSeverity: 'HIGH', filterPattern: '''!**/_cvs/**/*, !**/.svn/**/*,   !**/.hg/**/*,   !**/.git/**/*,  !**/.bzr/**/*, !**/bin/**/*,
+!**/obj/**/*,  !**/backup/**/*, !**/.idea/**/*, !**/*.DS_Store, !**/*.ipr,     !**/*.iws,
+!**/*.bak,     !**/*.tmp,       !**/*.aac,      !**/*.aif,      !**/*.iff,     !**/*.m3u, !**/*.mid, !**/*.mp3,
+!**/*.mpa,     !**/*.ra,        !**/*.wav,      !**/*.wma,      !**/*.3g2,     !**/*.3gp, !**/*.asf, !**/*.asx,
+!**/*.avi,     !**/*.flv,       !**/*.mov,      !**/*.mp4,      !**/*.mpg,     !**/*.rm,  !**/*.swf, !**/*.vob,
+!**/*.wmv,     !**/*.bmp,       !**/*.gif,      !**/*.jpg,      !**/*.png,     !**/*.psd, !**/*.tif, !**/*.swf,
+!**/*.jar,     !**/*.zip,       !**/*.rar,      !**/*.exe,      !**/*.dll,     !**/*.pdb, !**/*.7z,  !**/*.gz,
+!**/*.tar.gz,  !**/*.tar,       !**/*.gz,       !**/*.ahtm,     !**/*.ahtml,   !**/*.fhtml, !**/*.hdm,
+!**/*.hdml,    !**/*.hsql,      !**/*.ht,       !**/*.hta,      !**/*.htc,     !**/*.htd, !**/*.war, !**/*.ear,
+!**/*.htmls,   !**/*.ihtml,     !**/*.mht,      !**/*.mhtm,     !**/*.mhtml,   !**/*.ssi, !**/*.stm,
+!**/*.stml,    !**/*.ttml,      !**/*.txn,      !**/*.xhtm,     !**/*.xhtml,   !**/*.class, !**/*.iml, !Checkmarx/Reports/*.*''', fullScanCycle: 10, groupId: '771010c6-0a26-4ee0-8f21-c6fb142add88', includeOpenSourceFolders: '', osaArchiveIncludePatterns: '*.zip, *.war, *.ear, *.tgz', osaInstallBeforeScan: false, password: '{AQAAABAAAAAQ+J8/E8zRExKYoeQKxX2PKjFuc3PAns13loVFkxP/Pqc=}', preset: '36', projectName: "${NAME}", sastEnabled: true, serverUrl: 'https://10.64.248.39/', sourceEncoding: '1', username: '', vulnerabilityThresholdResult: 'FAILURE', waitForResultsEnabled: true])
+            }
+        }
+        stage('Publish CheckMarxs Report') {
+            when {
+                expression { return params.CHECKMARXS_ANALYSIS ==~ /(?i)(Y|YES|T|TRUE|ON|RUN)/ }
+            }
+            steps {
+                publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'Checkmarx/Reports', reportFiles: 'Report_CxSAST.html', reportName: 'CheckMarxs Report', reportTitles: ''])
+            }
+        }
+        stage('Build + SonarQube QA analysis') {
+            environment {
+                sqScannerMsBuildHome = tool 'SonarScannerForMSBuild';
+            }
+            when {
+                expression { return params.SONARQUBE_ANALYSIS ==~ /(?i)(Y|YES|T|TRUE|ON|RUN)/ && params.SONARQUBE_SERVER == 'SonarQube QA' }
+            }
+            steps {
+                withSonarQubeEnv('Sonar QA') {
+                    echo 'Jfrog config'
+                    bat "jfrog rt c Artifactory --url=http://10.85.4.19:8081/artifactory/ --user=calidadsw --password=AP7ScVHsEGLCMWQd6DQhGsMWJmY --interactive=false --enc-password=false"
+                    echo "--> ${SONARQUBE_SERVER}"
+                    bat "${sqScannerMsBuildHome}\\SonarScanner.MSBuild.exe begin /n:${NAME} /k:${PROJECTKEY} /v:${PACKAGE_VERSION} /d:sonar.verbose=true /d:sonar.host.url=${URLSONAR_QA} /d:sonar.login=${LOGINSONAR_QA} /d:sonar.exclusions=Checkmarx\\**"
+                    bat "MSBuild.exe ${SLNNAME} /t:Clean /t:Restore /t:Rebuild /p:ArtifactoryPublish=false"
+                    bat "${sqScannerMsBuildHome}\\SonarScanner.MSBuild.exe end /d:sonar.login=${LOGINSONAR_QA}"
+                }
+            }
+        }
+        stage('Build + SonarQube Prod analysis') {
+            environment {
+                sqScannerMsBuildHome = tool 'SonarScannerForMSBuild';
+            }
+            when {
+                expression { return params.SONARQUBE_ANALYSIS ==~ /(?i)(Y|YES|T|TRUE|ON|RUN)/ && params.SONARQUBE_SERVER == 'SonarQube Productivo' }
+            }
+            steps {
+                withSonarQubeEnv('Sonar Prod') {
+                    echo 'Jfrog config'
+                    bat "jfrog rt c Artifactory --url=http://10.85.4.19:8081/artifactory/ --user=calidadsw --password=AP7ScVHsEGLCMWQd6DQhGsMWJmY --interactive=false --enc-password=false"
+                    echo "--> ${SONARQUBE_SERVER}"
+                    bat "${sqScannerMsBuildHome}\\SonarScanner.MSBuild.exe begin /n:${NAME} /k:${PROJECTKEY} /v:${PACKAGE_VERSION} /d:sonar.verbose=true /d:sonar.host.url=${URLSONAR_PROD} /d:sonar.login=${LOGINSONAR_PROD} /d:sonar.exclusions=Checkmarx\\**"
+                    bat "MSBuild.exe ${SLNNAME} /t:Clean /t:Restore /t:Rebuild /p:ArtifactoryPublish=false"
+                    bat "${sqScannerMsBuildHome}\\SonarScanner.MSBuild.exe end /d:sonar.login=${LOGINSONAR_PROD}"
+                }
+            }
+        }
+    }
+}
